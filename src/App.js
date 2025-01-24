@@ -2,14 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
-
-const Navbar = () => (
-  <nav>
-    <Link to="/">Home</Link>
-    <Link to="/cart">Cart</Link>
-    <Link to="/profile">Profile</Link>
-  </nav>
-);
+import Navbar from './components/Navbar';
 
 const HomePage = () => {
   const [counters, setCounters] = React.useState([]);
