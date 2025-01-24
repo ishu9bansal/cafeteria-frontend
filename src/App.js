@@ -60,7 +60,7 @@ const CartPage = () => {
 
   React.useEffect(() => {
     axios.get('http://localhost:5050/cart')
-      .then(response => setCart(response.data))
+      .then(response => setCart(response.data.cart))
       .catch(error => console.error('Error fetching cart:', error));
   }, []);
 
@@ -76,12 +76,21 @@ const CartPage = () => {
   );
 };
 
-const ProfilePage = () => (
-  <div>
+const ProfilePage = () => {
+  const [user, setUser] = React.useState({ name: "Guest", email: null });
+
+  React.useEffect(() => {
+    axios.get('http://localhost:5050/cart')
+      .then(response => setUser(response.data))
+      .catch(error => console.error('Error fetching cart:', error));
+  }, []);
+
+  return <div>
     <h1>Profile</h1>
-    <p>Profile details will go here.</p>
-  </div>
-);
+    <p><strong>Name: </strong>{user.name}</p>
+    <p><strong>Email: </strong>{user.email}</p>
+  </div>;
+};
 
 const App = () => (
   <Router>
