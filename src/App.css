@@ -83,7 +83,31 @@ body {
   text-align: center;
 }
 
-.cart-item button {
+.cart-item-quantity {
+  display: flex;
+  align-items: center;
+  gap: 10px
+}
+
+.cart-item-quantity p {
+  width: 25px;
+  text-align: center;
+}
+
+.cart-item-quantity button {
+  padding: 5px 10px;
+  background-color: rgb(109, 109, 254);
+  border: none;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cart-item-quantity button:hover {
+  background-color: rgb(73, 73, 166);
+}
+
+.cart-item-remove {
   padding: 5px 10px;
   background-color: red;
   border: none;
@@ -92,9 +116,10 @@ body {
   cursor: pointer;
 }
 
-.cart-item button:hover {
+.cart-item-remove:hover {
   background-color: darkred;
 }
+
 
 /* Pagination */
 .pagination {

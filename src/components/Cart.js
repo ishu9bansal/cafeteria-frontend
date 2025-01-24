@@ -12,19 +12,26 @@ const CartItem = ({ item, onUpdateQuantity }) => {
             })
             .catch(error => console.error('Error removing from cart:', error));
     };
-    // TODO: use + - buttons and add cart quantity change logic
+
+    const onChangeQuantity = (inc) => {
+        axios.patch(`http://localhost:5050/cart/${item.dish._id}`, {
+            changeQuantity: inc
+        }).then(response => {
+            dispatch(setCart(response.data));
+        }).catch(error => console.error('Error changing quantity in cart:', error));
+    };
     return (
         <div className="cart-item">
             <h5>{item.dish.name}</h5>
             <p>Price: ₹{item.dish.price}</p>
-            <p>Quantity: </p>
-            <input
-                type="number"
-                min="1"
-                value={item.quantity}
-                onChange={(e) => onUpdateQuantity(item.dish.id, parseInt(e.target.value, 10))}
-            />
-            <button onClick={onRemove}>Remove</button>
+
+            <div className="cart-item-quantity">
+                <button onClick={() => onChangeQuantity(-1)}>-</button>
+                <p>{item.quantity}</p>
+                <button onClick={() => onChangeQuantity(1)}>+</button>
+            </div>
+
+            <button className="cart-item-remove" onClick={onRemove}>Remove</button>
         </div>
     );
 };
