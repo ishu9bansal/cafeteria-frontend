@@ -7,7 +7,7 @@ const Navbar = () => {
     return (
         <nav className="navbar">
             <Link to="/">Home</Link>
-            {user && user.role === 'Customer' && <Link to="/cart">Cart</Link>}
+            {user && <Link to="/cart">Cart</Link>}
             {user && user.role === 'Admin' && <Link to="/users">Manage Users</Link>}
             {user && user.role === 'Admin' && <Link to="/counters">Manage Counters</Link>}
             {user && user.role === 'Merchant' && <Link to="/counters">My Counters</Link>}

@@ -1,55 +1,14 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
 import Navbar from './components/Navbar';
 import { useDispatch } from 'react-redux';
 import { setUser } from './slices/authSlice';
 import { setCart } from './slices/cartSlice';
+import { HomePage } from './components/Home';
+import { CounterPage } from './components/Counter';
 
-const HomePage = () => {
-  const [counters, setCounters] = React.useState([]);
-
-  React.useEffect(() => {
-    axios.get('http://localhost:5050/counters')
-      .then(response => setCounters(response.data))
-      .catch(error => console.error('Error fetching counters:', error));
-  }, []);
-
-  return (
-    <div>
-      <h1>Home Page</h1>
-      <ul>
-        {counters.map(counter => (
-          <li key={counter._id}>
-            <Link to={`/counter/${counter._id}`}>{counter.name}</Link>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-const CounterPage = ({ counterId }) => {
-  const [dishes, setDishes] = React.useState([]);
-
-  React.useEffect(() => {
-    axios.get(`http://localhost:5050/dishes?counter=${counterId}`)
-      .then(response => setDishes(response.data))
-      .catch(error => console.error('Error fetching dishes:', error));
-  }, [counterId]);
-
-  return (
-    <div>
-      <h1>Counter Dishes</h1>
-      <ul>
-        {dishes.map(dish => (
-          <li key={dish._id}>{dish.name} - ${dish.price}</li>
-        ))}
-      </ul>
-    </div>
-  );
-};
 
 const CartPage = () => {
   const [cart, setCart] = React.useState([]);
