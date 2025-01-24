@@ -12,10 +12,11 @@ const CartItem = ({ item, onUpdateQuantity }) => {
             })
             .catch(error => console.error('Error removing from cart:', error));
     };
+    // TODO: use + - buttons and add cart quantity change logic
     return (
         <div className="cart-item">
             <h5>{item.dish.name}</h5>
-            <p>Price: ${item.dish.price}</p>
+            <p>Price: ₹{item.dish.price}</p>
             <p>Quantity: </p>
             <input
                 type="number"

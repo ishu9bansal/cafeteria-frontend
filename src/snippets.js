@@ -1,9 +1,3 @@
-// CartItem.js
-
-
-
-export default CartItem;
-
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     const pages = [];
     for (let i = 1; i <= totalPages; i++) {
