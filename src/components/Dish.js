@@ -5,12 +5,13 @@ import { useDispatch } from "react-redux";
 export const DishCard = ({ dish }) => {
     const dispatch = useDispatch();
     const onAddToCart = () => {
-        axios.post(`http://localhost:5050/cart/${dish._id}`)
+        axios.post(`http://localhost:5050/cart/${dish._id}`)    // BUG: post response is not populated for new item
             .then(response => {
                 dispatch(setCart(response.data));
             })
             .catch(error => console.error('Error adding to cart:', error));
     };
+    // TODO: show quantity in the dish
     return (
         <div className="dish-card">
             <h4>{dish.name}</h4>

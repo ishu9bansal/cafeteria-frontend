@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 
 const Navbar = () => {
     const user = useSelector((state) => state.auth.user);
-
+    // TODO: Cart link visibility for all users? or only customers?
     return (
         <nav className="navbar">
             <Link to="/">Home</Link>

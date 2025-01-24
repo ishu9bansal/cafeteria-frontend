@@ -8,44 +8,8 @@ import { setUser } from './slices/authSlice';
 import { setCart } from './slices/cartSlice';
 import { HomePage } from './components/Home';
 import { CounterPage } from './components/Counter';
-
-
-const CartPage = () => {
-  const [cart, setCart] = React.useState([]);
-
-  React.useEffect(() => {
-    axios.get('http://localhost:5050/cart')
-      .then(response => setCart(response.data.cart))
-      .catch(error => console.error('Error fetching cart:', error));
-  }, []);
-
-  return (
-    <div>
-      <h1>Cart</h1>
-      <ul>
-        {cart.map(item => (
-          <li key={item.dish._id}>{item.dish.name} - Quantity: {item.quantity}</li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-const ProfilePage = () => {
-  const [user, setUser] = React.useState({ name: "Guest", email: null });
-
-  React.useEffect(() => {
-    axios.get('http://localhost:5050/cart')
-      .then(response => setUser(response.data))
-      .catch(error => console.error('Error fetching cart:', error));
-  }, []);
-
-  return <div>
-    <h1>Profile</h1>
-    <p><strong>Name: </strong>{user.name}</p>
-    <p><strong>Email: </strong>{user.email}</p>
-  </div>;
-};
+import { ProfilePage } from './components/Profile';
+import { CartPage } from './components/Cart';
 
 const App = () => {
   const dispatch = useDispatch();
