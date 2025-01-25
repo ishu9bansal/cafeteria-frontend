@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 const StaticCounterCard = ({ counter, setEditing, handleDelete }) => {
-    return (<div>
+    return (<div className="counter-card">
         <h3>{counter.name}</h3>
         <p><strong>Merchants:</strong></p>
         <ul>
@@ -10,8 +10,11 @@ const StaticCounterCard = ({ counter, setEditing, handleDelete }) => {
                 {merchant.name} - {merchant.email}
             </li>))}
         </ul>
-        <button onClick={() => setEditing(true)}>Edit</button>
-        <button onClick={handleDelete}>Delete</button>
+        <div className="button-group">
+            <button onClick={() => setEditing(true)}>Edit</button>
+            <button onClick={handleDelete}>Delete</button>
+        </div>
+
     </div>);
 };
 
@@ -30,7 +33,7 @@ const EditingCounterCard = ({ counter, handleSave, onCancel }) => {
         setMerchants(updatedMerchants);
     }
 
-    return (<div>
+    return (<div className="counter-card">
         <h3><input type="text" value={name} onChange={(e) => setName(e.target.value)} /></h3>
         <p><strong>Merchants:</strong></p>
         <ul>
@@ -38,11 +41,13 @@ const EditingCounterCard = ({ counter, handleSave, onCancel }) => {
                 <span>{merchant.name} - {merchant.email}</span>
                 <button onClick={handleDeleteUser(merchant._id)}>X</button>
             </li>))}
-
-            <input placeholder="Start typing to search for merchants" type="text" value={query} onChange={(e) => handleSearch(e.target.value)} />
+            <li>Hello</li>
+            <li><input placeholder="Start typing to search for merchants" type="text" value={query} onChange={(e) => handleSearch(e.target.value)} /></li>
         </ul>
-        <button onClick={() => handleSave({ name, merchants })}>Save</button>
-        <button onClick={onCancel}>Cancel</button>
+        <div className="button-group">
+            <button onClick={() => handleSave({ name, merchants })}>Save</button>
+            <button onClick={onCancel}>Cancel</button>
+        </div>
     </div>);
 };
 
@@ -93,7 +98,7 @@ export const ManageCountersPage = () => {
     useEffect(fetchCounters, []);
 
     return (
-        <div>
+        <div className="manage-counters">
             <h1>Manage Counters</h1>
             <input type="text" placeholder="Name of the new counter..." value={counterName} onChange={(e) => setCounterName(e.target.value)} />
             <button onClick={() => addCounter(counterName)}>
