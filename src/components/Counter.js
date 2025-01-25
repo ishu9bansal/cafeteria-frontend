@@ -70,9 +70,9 @@ export const CounterPage = () => {
 };
 
 const selectCanUserEditCounter = (state) => {
-    return false;
+    // return false;
     const { user } = state.auth;
     const { details: counter } = state.counter;
 
-    return user && counter && counter.merchants?.includes(user._id);
+    return user && counter && counter.merchants?.map(m => m._id).includes(user._id);
 };
