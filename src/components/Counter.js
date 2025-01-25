@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DishCard, DishForm } from "./Dish";
 import { useDispatch, useSelector } from "react-redux";
-import { setCounter } from "../slices/counterSlice";
+import { setCounter, setDishes } from "../slices/counterSlice";
 
 export const CounterCard = ({ counter }) => {
     const navigate = useNavigate();
@@ -23,26 +23,24 @@ export const CounterCard = ({ counter }) => {
 export const CounterPage = () => {
     const counterId = useSelector(state => state.counter.details._id);
     const canEdit = useSelector(selectCanUserEditCounter);
-    const [dishes, setDishes] = useState([]);
+    const dishes = useSelector(state => state.counter.dishes);
     const [showForm, setShowForm] = useState(false);
+    const dispatch = useDispatch();
 
     const handleDishCreated = (newDish) => {
-        setDishes([...dishes, newDish]); // Add the new dish to the existing list
+        dispatch(setDishes([...dishes, newDish])); // Add the new dish to the existing list
     };
 
     useEffect(() => {
         axios.get(`http://localhost:5050/dishes?counter=${counterId}`)
-            .then(response => setDishes(response.data))
+            .then(response => dispatch(setDishes(response.data)))
             .catch(error => console.error('Error fetching dishes:', error));
+        return () => dispatch(setDishes([]));
     }, [counterId]);
 
     const onUpdateDish = (dish) => {
-        const updatedDishes = [...dishes];
-        const ind = updatedDishes.findIndex(ele => ele._id === dish._id);
-        if (ind >= 0) {
-            updatedDishes[ind] = dish;
-        }
-        setDishes(updatedDishes);
+        const updatedDishes = dishes.map(d => d._id === dish._id ? dish : d);
+        dispatch(setDishes(updatedDishes));
     };
 
     return (
