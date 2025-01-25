@@ -1,12 +1,16 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { DishCard, DishForm } from "./Dish";
+import { useDispatch, useSelector } from "react-redux";
+import { setCounter } from "../slices/counterSlice";
 
 export const CounterCard = ({ counter }) => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const onClick = () => {
-        navigate(`/counter/${counter._id}`)
+        dispatch(setCounter(counter))
+        navigate(`/counter`)
     };
     return (
         <div className="counter-card" onClick={onClick}>
@@ -17,7 +21,8 @@ export const CounterCard = ({ counter }) => {
 };
 
 export const CounterPage = () => {
-    const { id: counterId } = useParams();
+    const counterId = useSelector(state => state.counter.details._id);
+    const canEdit = useSelector(selectCanUserEditCounter);
     const [dishes, setDishes] = useState([]);
     const [showForm, setShowForm] = useState(false);
 
@@ -43,7 +48,8 @@ export const CounterPage = () => {
     return (
         <div>
             <h1>Counter Dishes</h1>
-            <button className="new-dish" onClick={() => setShowForm(true)}>Add New Dish</button>
+            {canEdit &&
+                <button className="new-dish" onClick={() => setShowForm(true)}>Add New Dish</button>}
 
             {showForm && (
                 <DishForm
@@ -53,8 +59,15 @@ export const CounterPage = () => {
                 />
             )}
             <div>
-                {dishes.map(dish => <DishCard key={dish._id} dish={dish} onUpdateDish={onUpdateDish} />)}
+                {dishes.map(dish => <DishCard key={dish._id} dish={dish} isEditable={canEdit} onUpdateDish={onUpdateDish} />)}
             </div>
         </div>
     );
+};
+
+const selectCanUserEditCounter = (state) => {
+    const { user } = state.auth;
+    const { details: counter } = state.counter;
+
+    return user && counter && counter.merchants?.includes(user._id);
 };
