@@ -385,7 +385,7 @@ button.new-dish {
 }
 
 /* Counter Cards */
-.counter-card {
+.admin-counter-card {
   margin: 20px 0;
   padding: 15px;
   border: 1px solid #ddd;
@@ -395,43 +395,54 @@ button.new-dish {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 500px;
 }
 
-.counter-card h3 {
+.admin-counter-card input[type="text"] {
+  width: 90%;
+  padding: 8px;
+  margin: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.admin-counter-card h3 {
   font-size: 18px;
   margin: 0;
   color: #222;
 }
 
-.counter-card p {
+.admin-counter-card p {
   margin: 0;
   font-weight: bold;
   color: #555;
 }
 
-.counter-card ul {
+.admin-counter-card ul {
   list-style-type: none;
   padding: 0;
   margin: 10px 0;
 }
 
-.counter-card li {
+.admin-counter-card li {
   display: flex;
-  justify-content: space-between;
-  margin: 5px 0;
+  justify-content: end;
+  margin: 5px 25px;
+  gap: 50px;
 }
 
-.counter-card li span {
+.admin-counter-card li span {
   font-size: 14px;
   color: #666;
 }
 
-.counter-card .button-group {
+.admin-counter-card .button-group {
   display: flex;
   gap: 10px;
 }
 
-.counter-card button {
+.admin-counter-card button {
   padding: 8px 10px;
   font-size: 13px;
   border: none;
@@ -440,8 +451,14 @@ button.new-dish {
   transition: background-color 0.3s ease;
 }
 
-.counter-card button:hover {
+.admin-counter-card button:hover {
   opacity: 0.9;
+}
+
+.admin-counter-card .remove-user {
+  color: red;
+  cursor: pointer;
+  text-align: left;
 }
 
 /* Responsive Design */
@@ -455,7 +472,7 @@ button.new-dish {
     width: 100%;
   }
 
-  .counter-card {
+  .admin-counter-card {
     gap: 5px;
   }
 }

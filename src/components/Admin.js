@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 const StaticCounterCard = ({ counter, setEditing, handleDelete }) => {
-    return (<div className="counter-card">
+    return (<div className="admin-counter-card">
         <h3>{counter.name}</h3>
         <p><strong>Merchants:</strong></p>
         <ul>
@@ -33,17 +33,15 @@ const EditingCounterCard = ({ counter, handleSave, onCancel }) => {
         setMerchants(updatedMerchants);
     }
 
-    return (<div className="counter-card">
+    return (<div className="admin-counter-card">
         <h3><input type="text" value={name} onChange={(e) => setName(e.target.value)} /></h3>
         <p><strong>Merchants:</strong></p>
         <ul>
             {merchants.map(merchant => (<li>
-                <span>{merchant.name} - {merchant.email}</span>
-                <button onClick={handleDeleteUser(merchant._id)}>X</button>
+                <span>{merchant.name} - {merchant.email}</span><span className="remove-user" onClick={() => handleDeleteUser(merchant._id)}>X</span>
             </li>))}
-            <li>Hello</li>
-            <li><input placeholder="Start typing to search for merchants" type="text" value={query} onChange={(e) => handleSearch(e.target.value)} /></li>
         </ul>
+        <input placeholder="Start typing to search for merchants" type="text" value={query} onChange={(e) => handleSearch(e.target.value)} />
         <div className="button-group">
             <button onClick={() => handleSave({ name, merchants })}>Save</button>
             <button onClick={onCancel}>Cancel</button>
