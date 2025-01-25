@@ -10,6 +10,7 @@ import { HomePage } from './components/Home';
 import { CounterPage } from './components/Counter';
 import { ProfilePage } from './components/Profile';
 import { CartPage } from './components/Cart';
+import { UsersPage } from './components/User';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -33,6 +34,7 @@ const App = () => {
         <Route path="/counter" element={<CounterPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/users" element={<UsersPage />} />
       </Routes>
     </Router>
   );
