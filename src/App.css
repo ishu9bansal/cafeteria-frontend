@@ -37,6 +37,7 @@ body {
   background-color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   cursor: pointer;
+  max-width: 500px;
 }
 
 .counter-card:hover {
@@ -62,6 +63,8 @@ button.new-dish {
   margin: 10px;
   background-color: #fff;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  width: 250px;
+  justify-self: center;
 }
 
 .dish-card:hover {

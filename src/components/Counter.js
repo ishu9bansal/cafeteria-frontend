@@ -44,6 +44,11 @@ export const CounterPage = () => {
         dispatch(setDishes(updatedDishes));
     };
 
+    const onDeleteDish = (dishId) => {
+        const updatedDishes = dishes.filter(d => d._id !== dishId);
+        dispatch(setDishes(updatedDishes));
+    };
+
     return (
         <div>
             <h1>{counter.name}</h1>
@@ -58,13 +63,14 @@ export const CounterPage = () => {
                 />
             )}
             <div>
-                {dishes.map(dish => <DishCard key={dish._id} dish={dish} isEditable={canEdit} onUpdateDish={onUpdateDish} />)}
+                {dishes.map(dish => <DishCard key={dish._id} dish={dish} isEditable={canEdit} onUpdateDish={onUpdateDish} onDeleteDish={onDeleteDish} />)}
             </div>
         </div>
     );
 };
 
 const selectCanUserEditCounter = (state) => {
+    // return false;
     const { user } = state.auth;
     const { details: counter } = state.counter;
 

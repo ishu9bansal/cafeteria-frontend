@@ -3,7 +3,7 @@ import { setCart } from "../slices/cartSlice";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
 
-export const DishCard = ({ dish, isEditable = false, onUpdateDish }) => {
+export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish }) => {
     const dispatch = useDispatch();
     const [isEditing, setIsEditing] = useState(false);
     const [editForm, setEditForm] = useState({
@@ -33,6 +33,13 @@ export const DishCard = ({ dish, isEditable = false, onUpdateDish }) => {
             .then(response => {
                 onUpdateDish(response.data); // Update the dish in the parent component
                 setIsEditing(false);
+            })
+            .catch(error => console.error('Error updating dish:', error));
+    };
+    const deleteDish = () => {
+        axios.delete(`http://localhost:5050/dishes/${dish._id}`)
+            .then(response => {
+                onDeleteDish(dish._id);
             })
             .catch(error => console.error('Error updating dish:', error));
     };
@@ -81,9 +88,10 @@ export const DishCard = ({ dish, isEditable = false, onUpdateDish }) => {
                     >
                         Add to Cart
                     </button>)}
-                    {isEditable && (
+                    {isEditable && (<>
                         <button onClick={() => setIsEditing(true)}>Edit</button>
-                    )}
+                        <button onClick={deleteDish}>Delete</button>
+                    </>)}
                 </>
             )}
         </div>
@@ -151,6 +159,7 @@ export const DishForm = ({ counterId, onClose, onDishCreated }) => {
                 />
                 In Stock
             </label>
+            <br />
             <button type="submit">Create Dish</button>
             <button type="button" onClick={onClose}>Cancel</button>
         </form>
