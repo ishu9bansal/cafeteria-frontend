@@ -21,7 +21,8 @@ export const CounterCard = ({ counter }) => {
 };
 
 export const CounterPage = () => {
-    const counterId = useSelector(state => state.counter.details._id);
+    const counter = useSelector(state => state.counter.details);
+    const counterId = counter._id;
     const canEdit = useSelector(selectCanUserEditCounter);
     const dishes = useSelector(state => state.counter.dishes);
     const [showForm, setShowForm] = useState(false);
@@ -45,7 +46,7 @@ export const CounterPage = () => {
 
     return (
         <div>
-            <h1>Counter Dishes</h1>
+            <h1>{counter.name}</h1>
             {canEdit &&
                 <button className="new-dish" onClick={() => setShowForm(true)}>Add New Dish</button>}
 
