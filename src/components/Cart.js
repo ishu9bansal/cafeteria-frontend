@@ -38,6 +38,7 @@ const CartItem = ({ item, onUpdateQuantity }) => {
 
 export const CartPage = () => {
     const cart = useSelector(state => state.cart.items);
+    const total = useSelector(state => state.cart.items.reduce((acc, item) => (acc + item.quantity * item.dish.price), 0));
 
     return (
         <div>
@@ -45,6 +46,9 @@ export const CartPage = () => {
             <ul>
                 {cart.map(item => <CartItem item={item} />)}
             </ul>
+            <div className="cart-checkout">
+                <button><h2>Pay: ₹{total}{" >"}</h2></button>
+            </div>
         </div>
     );
 };

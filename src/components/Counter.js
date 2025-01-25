@@ -70,7 +70,7 @@ export const CounterPage = () => {
 };
 
 const selectCanUserEditCounter = (state) => {
-    // return false;
+    return false;
     const { user } = state.auth;
     const { details: counter } = state.counter;
 
