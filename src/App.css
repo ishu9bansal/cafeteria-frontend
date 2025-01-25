@@ -50,10 +50,20 @@ body {
   padding: 15px;
   margin: 10px;
   background-color: #fff;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.dish-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .dish-card h4 {
   margin: 0 0 10px;
+}
+
+.dish-card p {
+  margin: 5px 0;
 }
 
 .dish-card button {
@@ -63,11 +73,40 @@ body {
   color: white;
   border-radius: 4px;
   cursor: pointer;
+  margin-right: 5px;
 }
 
-.dish-card button:hover {
-  background-color: #0056b3;
+.dish-card button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }
+
+.dish-card.editing {
+  background-color: #f9f9f9;
+  border-color: #007bff;
+}
+
+.dish-card input[type="text"],
+.dish-card input[type="number"] {
+  width: calc(100% - 20px);
+  margin: 5px 0;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.dish-card input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+.dish-card button {
+  margin-top: 10px;
+}
+
+.dish-card button:last-child {
+  background-color: #ff4d4f;
+}
+
 
 /* CartItem */
 .cart-item {

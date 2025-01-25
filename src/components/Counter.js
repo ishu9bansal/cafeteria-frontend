@@ -25,11 +25,20 @@ export const CounterPage = ({ counterId }) => {
             .catch(error => console.error('Error fetching dishes:', error));
     }, [counterId]);
 
+    const onUpdateDish = (dish) => {
+        const updatedDishes = [...dishes];
+        const ind = updatedDishes.findIndex(ele => ele._id === dish._id);
+        if (ind >= 0) {
+            updatedDishes[ind] = dish;
+        }
+        setDishes(updatedDishes);
+    };
+
     return (
         <div>
             <h1>Counter Dishes</h1>
             <div>
-                {dishes.map(dish => <DishCard key={dish._id} dish={dish} />)}
+                {dishes.map(dish => <DishCard key={dish._id} dish={dish} onUpdateDish={onUpdateDish} />)}
             </div>
         </div>
     );
