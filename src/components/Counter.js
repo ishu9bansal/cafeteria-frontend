@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { DishCard } from "./Dish";
+import { useNavigate, useParams } from "react-router-dom";
+import { DishCard, DishForm } from "./Dish";
 
 export const CounterCard = ({ counter }) => {
     const navigate = useNavigate();
@@ -16,8 +16,14 @@ export const CounterCard = ({ counter }) => {
     );
 };
 
-export const CounterPage = ({ counterId }) => {
+export const CounterPage = () => {
+    const { id: counterId } = useParams();
     const [dishes, setDishes] = useState([]);
+    const [showForm, setShowForm] = useState(false);
+
+    const handleDishCreated = (newDish) => {
+        setDishes([...dishes, newDish]); // Add the new dish to the existing list
+    };
 
     useEffect(() => {
         axios.get(`http://localhost:5050/dishes?counter=${counterId}`)
@@ -37,6 +43,15 @@ export const CounterPage = ({ counterId }) => {
     return (
         <div>
             <h1>Counter Dishes</h1>
+            <button className="new-dish" onClick={() => setShowForm(true)}>Add New Dish</button>
+
+            {showForm && (
+                <DishForm
+                    counterId={counterId}
+                    onClose={() => setShowForm(false)}
+                    onDishCreated={handleDishCreated}
+                />
+            )}
             <div>
                 {dishes.map(dish => <DishCard key={dish._id} dish={dish} onUpdateDish={onUpdateDish} />)}
             </div>

@@ -89,3 +89,70 @@ export const DishCard = ({ dish, isEditable = false, onUpdateDish }) => {
         </div>
     );
 };
+
+
+
+
+export const DishForm = ({ counterId, onClose, onDishCreated }) => {
+    const [formData, setFormData] = useState({
+        name: '',
+        price: '',
+        inStock: true,
+    });
+
+    const handleChange = (e) => {
+        const { name, value, type, checked } = e.target;
+        setFormData({
+            ...formData,
+            [name]: type === 'checkbox' ? checked : value,
+        });
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        axios.post(`http://localhost:5050/dishes`, {
+            ...formData,
+            hello: 'world',
+            counter: counterId, // Attach the counter ID to associate the dish with the current counter
+        })
+            .then(response => {
+                onDishCreated(response.data); // Inform parent component about the new dish
+                onClose(); // Close the form/modal
+            })
+            .catch(error => console.error('Error creating dish:', error));
+    };
+
+    return (
+        <form className="dish-form" onSubmit={handleSubmit}>
+            <h3>Create New Dish</h3>
+            <input
+                type="text"
+                name="name"
+                placeholder="Dish Name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+            />
+            <input
+                type="number"
+                name="price"
+                placeholder="Price"
+                value={formData.price}
+                onChange={handleChange}
+                min="0"
+                required
+            />
+            <label>
+                <input
+                    type="checkbox"
+                    name="inStock"
+                    checked={formData.inStock}
+                    onChange={handleChange}
+                />
+                In Stock
+            </label>
+            <button type="submit">Create Dish</button>
+            <button type="button" onClick={onClose}>Cancel</button>
+        </form>
+    );
+};
