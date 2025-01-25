@@ -1,5 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setUsers } from "../slices/counterSlice";
 
 const StaticCounterCard = ({ counter, setEditing, handleDelete }) => {
     return (<div className="admin-counter-card">
@@ -22,14 +24,16 @@ const EditingCounterCard = ({ counter, handleSave, onCancel }) => {
     const [name, setName] = useState(counter.name);
     const [merchants, setMerchants] = useState(counter.merchants);
     const [query, setQuery] = useState("");
-
-    const handleSearch = (newQuery) => {
-        setQuery(newQuery);
-        // trigger search
-    }
-
+    // TODO: fix search results selector, only merchants, don't show already included
+    // TODO: move the state to admin slice
+    const users = useSelector(state => state.counter.users.filter(u => u.name.toLowerCase().includes(query.toLowerCase())));
+    const showDropdown = query.length >= 3;
     const handleDeleteUser = (merchantId) => {
         const updatedMerchants = merchants.filter(m => m._id !== merchantId);
+        setMerchants(updatedMerchants);
+    }
+    const handleAddUser = (user) => {
+        const updatedMerchants = [...merchants, user]
         setMerchants(updatedMerchants);
     }
 
@@ -41,7 +45,14 @@ const EditingCounterCard = ({ counter, handleSave, onCancel }) => {
                 <span>{merchant.name} - {merchant.email}</span><span className="remove-user" onClick={() => handleDeleteUser(merchant._id)}>X</span>
             </li>))}
         </ul>
-        <input placeholder="Start typing to search for merchants" type="text" value={query} onChange={(e) => handleSearch(e.target.value)} />
+        <input placeholder="Start typing to search for merchants" type="text" value={query} onChange={(e) => setQuery(e.target.value)} />
+        {showDropdown && <div className="dropdown">
+            {users.map(user => (
+                <div key={user._id} onClick={() => handleAddUser(user)}>
+                    {user.name} - {user.email}
+                </div>
+            ))}
+        </div>}
         <div className="button-group">
             <button onClick={() => handleSave({ name, merchants })}>Save</button>
             <button onClick={onCancel}>Cancel</button>
@@ -54,7 +65,7 @@ export const CounterCard = ({ counter, handleDelete, handleSave }) => {
 
     const onHandleSave = ({ name, merchants }) => {
         setEditing(false);
-        handleSave({ _id: counter._id, name, merchants });
+        handleSave({ _id: counter._id, name, merchants: merchants.map(m => m._id) });
     }
 
     return (editing
@@ -64,8 +75,9 @@ export const CounterCard = ({ counter, handleDelete, handleSave }) => {
 };
 
 export const ManageCountersPage = () => {
-    const [counters, setCounters] = useState([]);
+    const [counters, setCounters] = useState([]);   // TODO: move to admin slice
     const [counterName, setCounterName] = useState('');
+    const dispatch = useDispatch();
 
     const fetchCounters = () => {
         axios.get('http://localhost:5050/counters')
@@ -93,7 +105,12 @@ export const ManageCountersPage = () => {
             .then(fetchCounters)
             .catch(error => console.error('Error deleting counter:', error));
     }
-    useEffect(fetchCounters, []);
+    useEffect(() => {
+        fetchCounters();
+        axios.get('http://localhost:5050/users')
+            .then(response => dispatch(setUsers(response.data)))
+            .catch(error => console.error('Error fetching users:', error));
+    }, []);
 
     return (
         <div className="manage-counters">
