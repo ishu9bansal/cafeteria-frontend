@@ -116,7 +116,7 @@ export const ManageCountersPage = () => {
         <div className="manage-counters">
             <h1>Manage Counters</h1>
             <input type="text" placeholder="Name of the new counter..." value={counterName} onChange={(e) => setCounterName(e.target.value)} />
-            <button onClick={() => addCounter(counterName)}>
+            <button disabled={counterName.trim().length === 0} onClick={() => addCounter(counterName)}>
                 Add New Counter
             </button>
             <div>

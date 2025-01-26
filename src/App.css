@@ -384,6 +384,11 @@ button.new-dish {
   background-color: #0056b3;
 }
 
+.manage-counters button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
 /* Counter Cards */
 .admin-counter-card {
   margin: 20px 0;
