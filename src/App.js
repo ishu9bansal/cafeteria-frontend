@@ -12,6 +12,7 @@ import { ProfilePage } from './components/Profile';
 import { CartPage } from './components/Cart';
 import { UsersPage } from './components/User';
 import { ManageCountersPage } from './components/Admin';
+import { Login, Register } from './components/Auth';
 
 const App = () => {
   const user = useSelector(state => state.auth.user);
@@ -34,6 +35,7 @@ const App = () => {
       fetchUser();
     }
   }, [user]);
+  // TODO: conditional navbar for auth pages
 
   return (
     <Router>
@@ -45,6 +47,8 @@ const App = () => {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/users" element={<UsersPage />} />
         <Route path="/counters" element={<ManageCountersPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
 
       </Routes>
     </Router>
