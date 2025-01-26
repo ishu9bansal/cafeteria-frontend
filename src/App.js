@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import axios from 'axios';
 import './App.css';
 import Navbar from './components/Navbar';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from './slices/authSlice';
 import { setCart } from './slices/cartSlice';
 import { HomePage } from './components/Home';
@@ -14,18 +14,26 @@ import { UsersPage } from './components/User';
 import { ManageCountersPage } from './components/Admin';
 
 const App = () => {
+  const user = useSelector(state => state.auth.user);
   const dispatch = useDispatch();
+  const fetchUser = async () => {
+    try {
+      const response = await axios.get('http://localhost:5050/cart');
+      const user = response.data;
+      const cart = [...user.cart];
+      delete (user.cart);
+      dispatch(setUser(user));
+      dispatch(setCart(cart));
+    } catch (err) {
+      console.error('Error fetching cart:', err);
+    }
+  };
+
   React.useEffect(() => {
-    axios.get('http://localhost:5050/cart')
-      .then(response => {
-        const user = response.data;
-        const cart = [...user.cart];
-        delete (user.cart);
-        dispatch(setUser(user));
-        dispatch(setCart(cart));
-      })
-      .catch(error => console.error('Error fetching cart:', error));
-  }, [dispatch]);
+    if (!user) {
+      fetchUser();
+    }
+  }, [user]);
 
   return (
     <Router>
