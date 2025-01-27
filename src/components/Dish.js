@@ -39,7 +39,7 @@ export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish 
 
     const saveChanges = async () => {
         try {
-            const updatedDish = await retryApi('put', `/dishes/${dish._id}`, editForm);
+            const updatedDish = await retryApi('put', `/counter/${dish.counter}/${dish._id}`, editForm);
             onUpdateDish(updatedDish); // Update the dish in the parent component
             setIsEditing(false);
         } catch (err) {
@@ -48,7 +48,7 @@ export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish 
     };
     const deleteDish = async () => {
         try {
-            const dish = await retryApi('delte', `/dishes/${dish._id}`);
+            const dish = await retryApi('delte', `/counter/${dish.counter}/${dish._id}`);
             onDeleteDish(dish._id);
         } catch (err) {
             console.error('Error deleting dish:', err);
@@ -136,7 +136,7 @@ export const DishForm = ({ counterId, onClose, onDishCreated }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const dish = await retryApi('post', '/dishes', { ...formData, counter: counterId })
+            const dish = await retryApi('post', `/counter/${dish.counter}`, { ...formData, counter: counterId })
             onDishCreated(dish); // Inform parent component about the new dish
             onClose(); // Close the form/modal
         } catch (err) {
