@@ -2,7 +2,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { removeUser } from '../slices/authSlice';
 import { useState } from 'react';
-import axios from 'axios';
+import { authCall } from '../utils';
 
 export function Auth() {
     const user = useSelector(state => state.auth.currentUser);
@@ -10,7 +10,7 @@ export function Auth() {
     return (
         user
             ? <Outlet />
-            : <Navigate to='/login' state={{ from: location.pathname }} />
+            : <Navigate to='/login' state={{ from: location.pathname }} replace />
     );
 }
 
@@ -22,21 +22,18 @@ export function Login() {
     const navigate = useNavigate();
     const location = useLocation();
     const nextPage = location.state?.from || '/';
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
         setError('');
-        axios.post('http://localhost:5050/login', { email, password })
-            .then(response => {
-                const { token, refreshToken } = response.data;
-                dispatch(removeUser());
-                localStorage.setItem('token', token);
-                localStorage.setItem('refreshToken', refreshToken);
-                navigate(nextPage);
-            }).catch(err => {
-                console.log(error);
-                const errMessage = err.response?.data?.message || "Something went wrong";
-                setError(errMessage);
-            });
+        try {
+            await authCall.login(email, password);
+            dispatch(removeUser());
+            navigate(nextPage, { replace: true });
+        } catch (err) {
+            console.log(err);
+            const errMessage = err.response?.data?.message || "Something went wrong";
+            setError(errMessage);
+        }
     };
     return (
         <>
@@ -77,7 +74,7 @@ export function Register() {
     const [password2, setPassword2] = useState("");
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
-    const handleRegister = (e) => {
+    const handleRegister = async (e) => {
         e.preventDefault();
         setError("");
         setSuccess("");
@@ -85,13 +82,14 @@ export function Register() {
             setError('Password mismatch!!');
             return;
         }
-        axios.post('http://localhost:5050/register', { username, email, password })
-            .then(response => {
-                setSuccess("User created successfully! Proceed to login.")
-            }).catch(err => {
-                const errMessage = err?.response?.data?.message || "Something went wrong!";
-                setError(errMessage);
-            });
+        try {
+            await authCall.register(username, email, password);
+            setSuccess("User created successfully! Proceed to login.");
+        } catch (err) {
+            console.log(err);
+            const errMessage = err.response?.data?.message || "Something went wrong";
+            setError(errMessage);
+        }
     };
     return (
         <>
