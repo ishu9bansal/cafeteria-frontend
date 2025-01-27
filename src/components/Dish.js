@@ -92,7 +92,7 @@ export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish 
                     <h4>{dish.name}</h4>
                     <p>Price: ₹{dish.price}</p>
                     <p>{dish.inStock ? 'In Stock' : 'Out of Stock'}</p>
-                    <p>{dish.counter.name}</p>
+                    {!isEditable && <p>{dish.counter.name}</p>}
                     {!isEditable && (<>
                         {existInCart
                             ? (<button className="go-to" onClick={goToCart}>
@@ -136,7 +136,7 @@ export const DishForm = ({ counterId, onClose, onDishCreated }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const dish = await retryApi('post', `/counter/${dish.counter}`, { ...formData, counter: counterId })
+            const dish = await retryApi('post', `/counter/${counterId}`, formData);
             onDishCreated(dish); // Inform parent component about the new dish
             onClose(); // Close the form/modal
         } catch (err) {

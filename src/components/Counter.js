@@ -26,13 +26,15 @@ export const CounterPage = () => {
     const counter = useSelector(state => state.counter.details);
     const counterId = counter._id;
     const canEdit = useSelector(selectCanUserEditCounter);
+    const fetchDishesApi = canEdit ? `/counter/${counterId}` : `/dishes?counter=${counterId}`;
     const dishes = useSelector(state => state.counter.dishes);
     const [showForm, setShowForm] = useState(false);
     const dispatch = useDispatch();
 
     const fetchDishes = async (counterId) => {
         try {
-            const dishes = await retryApi('get', `/dishes?counter=${counterId}`);
+
+            const dishes = await retryApi('get', fetchDishesApi);
             dispatch(setDishes(dishes));
         } catch (err) {
             console.error('Error fetching dishes:', err)
