@@ -45,15 +45,16 @@ const App = () => {
 
   return (
     <Router>
-      <Navbar />
       <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/counter" element={<CounterPage />} />
-        <Route element={<Auth />}>
-          <Route path="/cart" element={<CartPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/users" element={<UsersPage />} />
-          <Route path="/counters" element={<ManageCountersPage />} />
+        <Route element={<Navbar />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/counter" element={<CounterPage />} />
+          <Route element={<Auth />}>
+            <Route path="/cart" element={<CartPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/users" element={<UsersPage />} />
+            <Route path="/counters" element={<ManageCountersPage />} />
+          </Route>
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
