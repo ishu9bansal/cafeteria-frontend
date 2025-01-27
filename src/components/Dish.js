@@ -1,17 +1,24 @@
-import axios from "axios";
 import { setCart } from "../slices/cartSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import { retryApi } from "../utils";
+import { useNavigate } from "react-router-dom";
 
 export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish }) => {
+    const cartDishes = useSelector(state => state.cart.items.map(item => item.dish._id));
+    const existInCart = cartDishes.includes(dish._id);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [isEditing, setIsEditing] = useState(false);
     const [editForm, setEditForm] = useState({
         name: dish.name,
         price: dish.price,
         inStock: dish.inStock,
     });
+
+    const goToCart = () => {
+        navigate('/cart');
+    }
 
     const onAddToCart = async () => {
         try {
@@ -87,9 +94,14 @@ export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish 
                     <p>{dish.inStock ? 'In Stock' : 'Out of Stock'}</p>
                     <p>{dish.counter.name}</p>
                     {!isEditable && (<>
-                        <button disabled={!dish.inStock} onClick={onAddToCart}>
-                            Add to Cart
-                        </button>
+                        {existInCart
+                            ? (<button className="go-to" onClick={goToCart}>
+                                Go to Cart
+                            </button>)
+                            : (<button disabled={!dish.inStock} onClick={onAddToCart}>
+                                Add to Cart
+                            </button>)
+                        }
                         <button hidden></button>
                     </>)}
                     {isEditable && (<>
@@ -97,8 +109,9 @@ export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish 
                         <button onClick={deleteDish}>Delete</button>
                     </>)}
                 </>
-            )}
-        </div>
+            )
+            }
+        </div >
     );
 };
 

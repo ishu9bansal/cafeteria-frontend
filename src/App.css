@@ -9,6 +9,8 @@ body {
 
 /* Navbar */
 .navbar {
+  position: sticky;
+  top: 0;
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -93,6 +95,10 @@ button.new-dish {
 .dish-card button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+}
+
+.dish-card .go-to {
+  background-color: #ffcc67;
 }
 
 .dish-card.editing {
