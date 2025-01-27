@@ -47,9 +47,9 @@ const App = () => {
     <Router>
       <Routes>
         <Route element={<Navbar />}>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/counter" element={<CounterPage />} />
           <Route element={<Auth />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/counter" element={<CounterPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/users" element={<UsersPage />} />

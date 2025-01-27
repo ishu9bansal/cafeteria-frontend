@@ -1,8 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import placeHolderProfilePic from '../assets/profileImg.jpg'
-
-const ROLES = ['Customer', 'Merchant', 'Admin'];
+import { ROLE } from "../constants";
 
 const UserItem = ({ user, onRoleChange }) => {
     const [selectedRole, setSelectedRole] = useState(user.role);
@@ -16,6 +15,8 @@ const UserItem = ({ user, onRoleChange }) => {
             onRoleChange(user._id, selectedRole);
         }
     };
+
+    const ROLES = Object.keys(ROLE);
 
     return (
         <div className="user-card">
