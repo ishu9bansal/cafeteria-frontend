@@ -215,7 +215,7 @@ button.new-dish {
 }
 
 .cart-checkout {
-  justify-content: right;
+  justify-content: space-between;
   display: flex;
   padding: 0 20px;
 }
@@ -234,6 +234,19 @@ button.new-dish {
   background-color: rgb(27, 112, 61);
   transform: scale(1.02);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cart-error {
+  background-color: rgb(255, 219, 225);
+  max-width: 400px;
+  margin: 10px auto;
+  padding: 8px;
+  border: 1px solid #fba9a9;
+  border-radius: 16px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  color: rgb(104, 18, 18);
+  font-weight: bold;
+  text-align: center;
 }
 
 /* Pagination */
