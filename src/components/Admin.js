@@ -1,7 +1,7 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setUsers } from "../slices/counterSlice";
+import { retryApi } from "../utils";
 
 const StaticCounterCard = ({ counter, setEditing, handleDelete }) => {
     return (<div className="admin-counter-card">
@@ -79,37 +79,54 @@ export const ManageCountersPage = () => {
     const [counterName, setCounterName] = useState('');
     const dispatch = useDispatch();
 
-    const fetchCounters = () => {
-        axios.get('http://localhost:5050/counters')
-            .then(response => setCounters(response.data))
-            .catch(error => console.error('Error fetching counters:', error));
+    const fetchUsers = async () => {
+        try {
+            const users = await retryApi('get', '/users');
+            dispatch(setUsers(users));
+        } catch (err) {
+            console.error('Error fetching users:', err);
+        }
     };
 
-    const addCounter = (name) => {
-        axios.post(`http://localhost:5050/counters`, { name })
-            .then(r => {
-                setCounterName("");
-                fetchCounters()
-            })
-            .catch(error => console.error('Error adding counter:', error));
-    }
+    const fetchCounters = async () => {
+        try {
+            const countersArr = await retryApi('get', '/counters');
+            setCounters(countersArr);
+        } catch (err) {
+            console.error('Error fetching counters:', err);
+        }
+    };
 
-    const updateCounter = (counter) => {
-        axios.put(`http://localhost:5050/counters/${counter._id}`, counter)
-            .then(fetchCounters)
-            .catch(error => console.error('Error updating counter:', error));
-    }
+    const addCounter = async (name) => {
+        try {
+            await retryApi('get', '/counters', { name });
+            setCounterName("");
+            fetchCounters();
+        } catch (err) {
+            console.error('Error adding counter:', err);
+        }
+    };
 
-    const deleteCounter = (counterId) => {
-        axios.delete(`http://localhost:5050/counters/${counterId}`)
-            .then(fetchCounters)
-            .catch(error => console.error('Error deleting counter:', error));
-    }
+    const updateCounter = async (counter) => {
+        try {
+            await retryApi('put', `/counters/${counter._id}`, counter);
+            fetchCounters();
+        } catch (err) {
+            console.error('Error updating counter:', err);
+        }
+    };
+
+    const deleteCounter = async (counterId) => {
+        try {
+            await retryApi('delete', `/counters/${counterId}`);
+            fetchCounters();
+        } catch (err) {
+            console.error('Error deleting counter:', err);
+        }
+    };
     useEffect(() => {
         fetchCounters();
-        axios.get('http://localhost:5050/users')
-            .then(response => dispatch(setUsers(response.data)))
-            .catch(error => console.error('Error fetching users:', error));
+        fetchUsers();
     }, []);
 
     return (
