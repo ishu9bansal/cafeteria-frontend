@@ -1,19 +1,28 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { CounterCard } from "./Counter";
+import { retryApi } from "../utils";
 
-export const HomePage = () => {
+export const HomePage = ({ merchantId }) => {
     const [counters, setCounters] = useState([]);
+    const title = merchantId ? 'My Counters' : 'Home Page';
+    const query = merchantId ? `?merchants=${merchantId}` : '';
+
+    const fetchCounters = async (filters) => {
+        try {
+            const counters = await retryApi('get', '/counters' + filters);
+            setCounters(counters);
+        } catch (err) {
+            console.error('Error fetching counters:', err);
+        }
+    }
 
     useEffect(() => {
-        axios.get('http://localhost:5050/counters')
-            .then(response => setCounters(response.data))
-            .catch(error => console.error('Error fetching counters:', error));
-    }, []);
+        fetchCounters(query);
+    }, [query]);
 
     return (
         <div>
-            <h1>Home Page</h1>
+            <h1>{title}</h1>
             <div>
                 {counters.map(counter => <CounterCard key={counter._id} counter={counter} />)}
             </div>
