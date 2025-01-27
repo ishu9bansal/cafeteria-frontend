@@ -32,8 +32,8 @@ export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish 
 
     const saveChanges = async () => {
         try {
-            const dish = await retryApi('put', `/dishes/${dish._id}`, editForm);
-            onUpdateDish(dish); // Update the dish in the parent component
+            const updatedDish = await retryApi('put', `/dishes/${dish._id}`, editForm);
+            onUpdateDish(updatedDish); // Update the dish in the parent component
             setIsEditing(false);
         } catch (err) {
             console.error('Error updating dish:', err);
