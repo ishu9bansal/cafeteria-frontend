@@ -24,9 +24,10 @@ const EditingCounterCard = ({ counter, handleSave, onCancel }) => {
     const [name, setName] = useState(counter.name);
     const [merchants, setMerchants] = useState(counter.merchants);
     const [query, setQuery] = useState("");
-    // TODO: fix search results selector, only merchants, don't show already included
-    // TODO: move the state to admin slice
-    const users = useSelector(state => state.counter.users.filter(u => u.name.toLowerCase().includes(query.toLowerCase())));
+    const users = useSelector(state => state.counter.users);
+    const filteredUsers = users
+        .filter(u => !merchants.map(m => m._id).includes(u._id))
+        .filter(u => u.name.toLowerCase().includes(query.toLowerCase()));
     const showDropdown = query.length >= 1;
     const handleDeleteUser = (merchantId) => {
         const updatedMerchants = merchants.filter(m => m._id !== merchantId);
@@ -47,7 +48,7 @@ const EditingCounterCard = ({ counter, handleSave, onCancel }) => {
         </ul>
         <input placeholder="Start typing to search for merchants" type="text" value={query} onChange={(e) => setQuery(e.target.value)} />
         {showDropdown && <div className="dropdown">
-            {users.map(user => (
+            {filteredUsers.map(user => (
                 <div key={user._id} onClick={() => handleAddUser(user)}>
                     {user.name} - {user.email}
                 </div>
