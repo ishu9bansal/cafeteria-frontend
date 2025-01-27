@@ -2,6 +2,7 @@ import axios from "axios";
 import { setCart } from "../slices/cartSlice";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
+import { retryApi } from "../utils";
 
 export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish }) => {
     const dispatch = useDispatch();
@@ -12,12 +13,13 @@ export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish 
         inStock: dish.inStock,
     });
 
-    const onAddToCart = () => {
-        axios.post(`http://localhost:5050/cart/${dish._id}`)
-            .then(response => {
-                dispatch(setCart(response.data));
-            })
-            .catch(error => console.error('Error adding to cart:', error));
+    const onAddToCart = async () => {
+        try {
+            const cart = await retryApi('post', `/cart/${dish._id}`);
+            dispatch(setCart(cart));
+        } catch (err) {
+            console.error('Error adding to cart:', err);
+        }
     };
 
     const handleEditChange = (e) => {
@@ -28,20 +30,22 @@ export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish 
         });
     };
 
-    const saveChanges = () => {
-        axios.put(`http://localhost:5050/dishes/${dish._id}`, editForm)
-            .then(response => {
-                onUpdateDish(response.data); // Update the dish in the parent component
-                setIsEditing(false);
-            })
-            .catch(error => console.error('Error updating dish:', error));
+    const saveChanges = async () => {
+        try {
+            const dish = await retryApi('put', `/dishes/${dish._id}`, editForm);
+            onUpdateDish(dish); // Update the dish in the parent component
+            setIsEditing(false);
+        } catch (err) {
+            console.error('Error updating dish:', err);
+        }
     };
-    const deleteDish = () => {
-        axios.delete(`http://localhost:5050/dishes/${dish._id}`)
-            .then(response => {
-                onDeleteDish(dish._id);
-            })
-            .catch(error => console.error('Error updating dish:', error));
+    const deleteDish = async () => {
+        try {
+            const dish = await retryApi('delte', `/dishes/${dish._id}`);
+            onDeleteDish(dish._id);
+        } catch (err) {
+            console.error('Error deleting dish:', err);
+        }
     };
 
     return (
@@ -116,18 +120,15 @@ export const DishForm = ({ counterId, onClose, onDishCreated }) => {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        axios.post(`http://localhost:5050/dishes`, {
-            ...formData,
-            hello: 'world',
-            counter: counterId, // Attach the counter ID to associate the dish with the current counter
-        })
-            .then(response => {
-                onDishCreated(response.data); // Inform parent component about the new dish
-                onClose(); // Close the form/modal
-            })
-            .catch(error => console.error('Error creating dish:', error));
+        try {
+            const dish = await retryApi('post', '/dishes', { ...formData, counter: counterId })
+            onDishCreated(dish); // Inform parent component about the new dish
+            onClose(); // Close the form/modal
+        } catch (err) {
+            console.error('Error creating dish:', err);
+        }
     };
 
     return (

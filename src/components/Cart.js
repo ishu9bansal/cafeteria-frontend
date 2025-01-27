@@ -1,24 +1,28 @@
-import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setCart } from "../slices/cartSlice";
+import { retryApi } from "../utils";
 
-const CartItem = ({ item, onUpdateQuantity }) => {
+const CartItem = ({ item }) => {
     const dispatch = useDispatch();
 
-    const onRemove = () => {
-        axios.delete(`http://localhost:5050/cart/${item.dish._id}`)
-            .then(response => {
-                dispatch(setCart(response.data));
-            })
-            .catch(error => console.error('Error removing from cart:', error));
+    const onRemove = async () => {
+        try {
+            const cart = await retryApi('delete', `/cart/${item.dish._id}`);
+            dispatch(setCart(cart));
+        }
+        catch (err) {
+            console.error('Error removing from cart:', err)
+        }
     };
 
-    const onChangeQuantity = (inc) => {
-        axios.patch(`http://localhost:5050/cart/${item.dish._id}`, {
-            changeQuantity: inc
-        }).then(response => {
-            dispatch(setCart(response.data));
-        }).catch(error => console.error('Error changing quantity in cart:', error));
+    const onChangeQuantity = async (inc) => {
+        try {
+            const cart = await retryApi('patch', `/cart/${item.dish._id}`, { changeQuantity: inc });
+            dispatch(setCart(cart));
+        }
+        catch (err) {
+            console.error('Error changing quantity in cart:', err);
+        }
     };
     return (
         <div className="cart-item">

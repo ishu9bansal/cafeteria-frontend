@@ -35,7 +35,7 @@ export async function retryApi(method, url, body) {
 
 export const authCall = {
     login: async (email, password) => {
-        const response = await axios.post('http://localhost:5050/auth/login', { email, password });
+        const response = await axios.post(AUTH_BASE_URL + '/login', { email, password });
         const { token, refreshToken, userId } = response.data;
         localStorage.setItem('userId', userId);
         localStorage.setItem('token', token);
@@ -49,7 +49,7 @@ export const authCall = {
         return newToken;
     },
     register: async (name, email, password) => {
-        await axios.post('http://localhost:5050/auth/register', { name, email, password });
+        await axios.post(AUTH_BASE_URL + '/register', { name, email, password });
     },
     logout: async () => {
         await axios.request(axiosAuthConfig('delete', '/auth/logout'));

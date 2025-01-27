@@ -1,9 +1,9 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { DishCard, DishForm } from "./Dish";
 import { useDispatch, useSelector } from "react-redux";
 import { setCounter, setDishes } from "../slices/counterSlice";
+import { retryApi } from "../utils";
 
 export const CounterCard = ({ counter }) => {
     const navigate = useNavigate();
@@ -28,16 +28,23 @@ export const CounterPage = () => {
     const [showForm, setShowForm] = useState(false);
     const dispatch = useDispatch();
 
+    const fetchDishes = async (counterId) => {
+        try {
+            const dishes = await retryApi('get', `/dishes?counter=${counterId}`);
+            dispatch(setDishes(dishes));
+        } catch (err) {
+            console.error('Error fetching dishes:', err)
+        }
+    }
+
+    useEffect(() => {
+        fetchDishes(counterId)
+        return () => dispatch(setDishes([]));
+    }, [counterId]);
+
     const handleDishCreated = (newDish) => {
         dispatch(setDishes([...dishes, newDish])); // Add the new dish to the existing list
     };
-
-    useEffect(() => {
-        axios.get(`http://localhost:5050/dishes?counter=${counterId}`)
-            .then(response => dispatch(setDishes(response.data)))
-            .catch(error => console.error('Error fetching dishes:', error));
-        return () => dispatch(setDishes([]));
-    }, [counterId]);
 
     const onUpdateDish = (dish) => {
         const updatedDishes = dishes.map(d => d._id === dish._id ? dish : d);

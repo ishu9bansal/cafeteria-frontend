@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import placeHolderProfilePic from '../assets/profileImg.jpg'
 import { ROLE } from "../constants";
@@ -54,20 +53,29 @@ const UserItem = ({ user, onRoleChange }) => {
 export const UsersPage = () => {
     const [users, setUsers] = useState([]);
 
+    const fetchUsers = async () => {
+        try {
+            const usersArr = await retryApi('get', `/users`);
+            setUsers(usersArr);
+        }
+        catch (err) {
+            console.error('Error fetching users:', err)
+        }
+    };
+
     useEffect(() => {
-        axios.get('http://localhost:5050/users')
-            .then(response => setUsers(response.data))
-            .catch(error => console.error('Error fetching users:', error));
+        fetchUsers();
     }, []);
 
-    const onChangeRole = (userId, role) => {
-        axios.put(`http://localhost:5050/users/${userId}`, { role })
-            .then(response => {
-                const user = response.data;
-                const updatedUsers = users.map(u => u._id === user._id ? user : u);
-                setUsers(updatedUsers);
-            })
-            .catch(error => console.error('Error editing user:', error));
+    const onChangeRole = async (userId, role) => {
+        try {
+            const usersArr = await retryApi('get', `/users${userId}`, { role });
+            const updatedUsers = usersArr.map(u => u._id === user._id ? user : u);
+            setUsers(updatedUsers);
+        }
+        catch (err) {
+            console.error('Error editing users:', err)
+        }
     };
 
     return (
