@@ -51,6 +51,10 @@ export const authCall = {
     register: async (name, email, password) => {
         await axios.post('http://localhost:5050/auth/register', { name, email, password });
     },
+    logout: async () => {
+        await axios.request(axiosAuthConfig('delete', '/auth/logout'));
+        localStorage.removeItem('userId');
+    }
 }
 
 // TODO: write a general retry logic
