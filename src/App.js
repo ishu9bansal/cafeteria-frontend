@@ -19,7 +19,12 @@ const App = () => {
   const dispatch = useDispatch();
   const fetchUser = async () => {
     try {
-      const response = await axios.get('http://localhost:5050/cart');
+      const localUserId = localStorage.getItem('userId');
+      const response = await axios.get('http://localhost:5050/cart', {
+        headers: {
+          'x-userId': localUserId,
+        }
+      });
       const user = response.data;
       const cart = [...user.cart];
       delete (user.cart);

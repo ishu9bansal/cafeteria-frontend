@@ -34,7 +34,8 @@ export async function retryApi(method, url, body) {
 export const authCall = {
     login: async (email, password) => {
         const response = await axios.post('http://localhost:5050/auth/login', { email, password });
-        const { token, refreshToken } = response.data;
+        const { token, refreshToken, userId } = response.data;
+        localStorage.setItem('userId', userId);
         localStorage.setItem('token', token);
         localStorage.setItem('refreshToken', refreshToken);
     },
