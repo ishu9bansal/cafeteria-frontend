@@ -86,12 +86,12 @@ export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish 
                     <p>Price: ₹{dish.price}</p>
                     <p>{dish.inStock ? 'In Stock' : 'Out of Stock'}</p>
                     <p>{dish.counter.name}</p>
-                    {!isEditable && (<button
-                        disabled={!dish.inStock}
-                        onClick={onAddToCart}
-                    >
-                        Add to Cart
-                    </button>)}
+                    {!isEditable && (<>
+                        <button disabled={!dish.inStock} onClick={onAddToCart}>
+                            Add to Cart
+                        </button>
+                        <button hidden></button>
+                    </>)}
                     {isEditable && (<>
                         <button onClick={() => setIsEditing(true)}>Edit</button>
                         <button onClick={deleteDish}>Delete</button>

@@ -97,6 +97,8 @@ export const ManageCounters = () => {
         fetchCounters(query);
     }, [query]);
 
+    // TODO: add loading and empty state
+
     return (
         <div>
             <h1>Manage Counters</h1>
