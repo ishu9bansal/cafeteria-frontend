@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import Navbar from './components/Navbar';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUser } from './slices/authSlice';
+import { setLoading, setUser } from './slices/authSlice';
 import { setCart } from './slices/cartSlice';
 import { HomePage } from './components/Home';
 import { CounterPage } from './components/Counter';
@@ -11,13 +11,15 @@ import { ProfilePage } from './components/Profile';
 import { CartPage } from './components/Cart';
 import { UsersPage } from './components/User';
 import { ManageCountersPage } from './components/Admin';
-import { Login, Register } from './components/Auth';
+import { Auth, Login, Register } from './components/Auth';
 import { retryApi } from './utils';
 
 const App = () => {
   const user = useSelector(state => state.auth.user);
+  const loading = useSelector(state => state.auth.loading);
   const dispatch = useDispatch();
   const fetchUser = async () => {
+    dispatch(setLoading(true));
     try {
       const user = await retryApi('get', '/cart');
       const cart = [...user.cart];
@@ -26,6 +28,8 @@ const App = () => {
       dispatch(setCart(cart));
     } catch (err) {
       console.error('Error fetching cart:', err);
+    } finally {
+      dispatch(setLoading(false));
     }
   };
 
@@ -34,7 +38,10 @@ const App = () => {
       fetchUser();
     }
   }, [user]);
-  // TODO: conditional navbar for auth pages
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Router>
@@ -42,10 +49,12 @@ const App = () => {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/counter" element={<CounterPage />} />
-        <Route path="/cart" element={<CartPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/users" element={<UsersPage />} />
-        <Route path="/counters" element={<ManageCountersPage />} />
+        <Route element={<Auth />}>
+          <Route path="/cart" element={<CartPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/users" element={<UsersPage />} />
+          <Route path="/counters" element={<ManageCountersPage />} />
+        </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 

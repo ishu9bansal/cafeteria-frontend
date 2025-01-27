@@ -14,7 +14,7 @@ function axiosAuthConfig(method, url, body) {
             Authorization: `Bearer ${token}`,
             'X-userId': userId,
         },
-        baseUrl: BASE_URL,
+        baseURL: BASE_URL,
     };
 }
 

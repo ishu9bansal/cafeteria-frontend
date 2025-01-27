@@ -1,11 +1,12 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { removeUser } from '../slices/authSlice';
 import { useState } from 'react';
-import { authCall } from '../utils';
+import { authCall, retryApi } from '../utils';
+import { setUser } from '../slices/authSlice';
+import { setCart } from '../slices/cartSlice';
 
 export function Auth() {
-    const user = useSelector(state => state.auth.currentUser);
+    const user = useSelector(state => state.auth.user);
     const location = useLocation();
     return (
         user
@@ -18,23 +19,41 @@ export function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
     const nextPage = location.state?.from || '/';
+
+    const fetchUser = async () => {
+        try {
+            const user = await retryApi('get', '/cart');
+            const cart = [...user.cart];
+            delete (user.cart);
+            dispatch(setUser(user));
+            dispatch(setCart(cart));
+        } catch (err) {
+            console.error('Error fetching cart:', err);
+        }
+    };
     const handleLogin = async (e) => {
         e.preventDefault();
         setError('');
+        setLoading(true);
         try {
             await authCall.login(email, password);
-            dispatch(removeUser());
+            await fetchUser();
             navigate(nextPage, { replace: true });
         } catch (err) {
             console.log(err);
             const errMessage = err.response?.data?.message || "Something went wrong";
             setError(errMessage);
+        } finally {
+            setLoading(false);
         }
     };
+
+    const loginButtonText = loading ? 'Loggin in...' : 'Login';
     return (
         <>
             <form className="form-container" onSubmit={handleLogin}>
@@ -47,7 +66,7 @@ export function Login() {
                     <label className="input-label">Password</label>
                     <input type="password" className="input-field" value={password} onChange={(e) => setPassword(e.target.value)} />
                 </div>
-                <input type="submit" value="Login" className="submit-button" />
+                <input disabled={loading} type="submit" value={loginButtonText} className="submit-button" />
             </form>
 
             {
