@@ -44,7 +44,7 @@ export const CartPage = () => {
         <div>
             <h1>Cart</h1>
             <ul>
-                {cart.map(item => <CartItem item={item} />)}
+                {cart.map(item => <CartItem key={item._id} item={item} />)}
             </ul>
             <div className="cart-checkout">
                 <button><h2>Pay: ₹{total}{" >"}</h2></button>

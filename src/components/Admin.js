@@ -8,7 +8,7 @@ const StaticCounterCard = ({ counter, setEditing, handleDelete }) => {
         <h3>{counter.name}</h3>
         <p><strong>Merchants:</strong></p>
         <ul>
-            {counter.merchants.map(merchant => (<li>
+            {counter.merchants.map(merchant => (<li key={merchant._id}>
                 {merchant.name} - {merchant.email}
             </li>))}
         </ul>
@@ -27,7 +27,7 @@ const EditingCounterCard = ({ counter, handleSave, onCancel }) => {
     // TODO: fix search results selector, only merchants, don't show already included
     // TODO: move the state to admin slice
     const users = useSelector(state => state.counter.users.filter(u => u.name.toLowerCase().includes(query.toLowerCase())));
-    const showDropdown = query.length >= 3;
+    const showDropdown = query.length >= 1;
     const handleDeleteUser = (merchantId) => {
         const updatedMerchants = merchants.filter(m => m._id !== merchantId);
         setMerchants(updatedMerchants);
@@ -41,7 +41,7 @@ const EditingCounterCard = ({ counter, handleSave, onCancel }) => {
         <h3><input type="text" value={name} onChange={(e) => setName(e.target.value)} /></h3>
         <p><strong>Merchants:</strong></p>
         <ul>
-            {merchants.map(merchant => (<li>
+            {merchants.map(merchant => (<li key={merchant._id}>
                 <span>{merchant.name} - {merchant.email}</span><span className="remove-user" onClick={() => handleDeleteUser(merchant._id)}>X</span>
             </li>))}
         </ul>
