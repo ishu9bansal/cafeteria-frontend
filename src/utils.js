@@ -3,13 +3,16 @@ import axios from "axios";
 const BASE_URL = 'http://localhost:5050';
 const AUTH_BASE_URL = 'http://localhost:5050/auth';
 
-function axiosAuthConfig(token, method, url, body) {
+function axiosAuthConfig(method, url, body) {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
     return {
         method: method,
         url: url,
         data: body,
         headers: {
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
+            'X-userId': userId,
         },
         baseUrl: BASE_URL,
     };
@@ -17,16 +20,15 @@ function axiosAuthConfig(token, method, url, body) {
 
 export async function retryApi(method, url, body) {
     try {
-        const token = localStorage.getItem('token');
-        const response = await axios.request(axiosAuthConfig(token, method, url, body));
+        const response = await axios.request(axiosAuthConfig(method, url, body));
         return response.data;
     } catch (err) {
         const errorMessage = err?.response?.data?.error;
         if (errorMessage !== 'jwt expired') {
             throw err;
         }
-        const newToken = await authCall.token();
-        const response = await axios.request(axiosAuthConfig(newToken, method, url, body));
+        await authCall.token();
+        const response = await axios.request(axiosAuthConfig(method, url, body));
         return response.data;
     }
 }
@@ -50,3 +52,5 @@ export const authCall = {
         await axios.post('http://localhost:5050/auth/register', { name, email, password });
     },
 }
+
+// TODO: write a general retry logic

@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import axios from 'axios';
 import './App.css';
 import Navbar from './components/Navbar';
 import { useDispatch, useSelector } from 'react-redux';
@@ -13,19 +12,14 @@ import { CartPage } from './components/Cart';
 import { UsersPage } from './components/User';
 import { ManageCountersPage } from './components/Admin';
 import { Login, Register } from './components/Auth';
+import { retryApi } from './utils';
 
 const App = () => {
   const user = useSelector(state => state.auth.user);
   const dispatch = useDispatch();
   const fetchUser = async () => {
     try {
-      const localUserId = localStorage.getItem('userId');
-      const response = await axios.get('http://localhost:5050/cart', {
-        headers: {
-          'x-userId': localUserId,
-        }
-      });
-      const user = response.data;
+      const user = await retryApi('get', '/cart');
       const cart = [...user.cart];
       delete (user.cart);
       dispatch(setUser(user));
