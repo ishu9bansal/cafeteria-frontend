@@ -4,6 +4,8 @@ import { DishCard, DishForm } from "./Dish";
 import { useDispatch, useSelector } from "react-redux";
 import { setCounter, setDishes } from "../slices/counterSlice";
 import { retryApi } from "../utils";
+import { ROLE } from "../constants";
+import { CountersAdminView } from "./Admin";
 
 export const CounterCard = ({ counter }) => {
     const navigate = useNavigate();
@@ -72,6 +74,41 @@ export const CounterPage = () => {
             <div>
                 {dishes.map(dish => <DishCard key={dish._id} dish={dish} isEditable={canEdit} onUpdateDish={onUpdateDish} onDeleteDish={onDeleteDish} />)}
             </div>
+        </div>
+    );
+};
+
+export const ManageCounters = () => {
+    const [counters, setCounters] = useState([]);
+    const user = useSelector(state => state.auth.user);
+    const isMerchantView = user?.role === ROLE.Merchant;
+    const query = isMerchantView ? `?merchants=${user._id}` : '';
+
+    const fetchCounters = async (filters = '') => {
+        try {
+            const counters = await retryApi('get', '/counters' + filters);
+            setCounters(counters);
+        } catch (err) {
+            console.error('Error fetching counters:', err);
+        }
+    }
+
+    useEffect(() => {
+        fetchCounters(query);
+    }, [query]);
+
+    return (
+        <div>
+            <h1>Manage Counters</h1>
+            {isMerchantView
+                ? (
+                    <div>
+                        {counters.map(counter => <CounterCard key={counter._id} counter={counter} />)}
+                    </div>
+                )
+                : (<CountersAdminView counters={counters} fetchCounters={fetchCounters} />)
+            }
+
         </div>
     );
 };

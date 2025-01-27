@@ -7,8 +7,8 @@ const Navbar = () => {
     return (
         <>
             <nav className="navbar">
-                {user && user.role === ROLE.Customer && <Link to="/">Home</Link>}
-                {user && user.role === ROLE.Customer && <Link to="/cart">Cart</Link>}
+                <Link to="/">Home</Link>
+                {user && <Link to="/cart">Cart</Link>}
                 {user && user.role === ROLE.Merchant && <Link to="/counters">My Counters</Link>}
                 {user && user.role === ROLE.Admin && <Link to="/users">Manage Users</Link>}
                 {user && user.role === ROLE.Admin && <Link to="/counters">Manage Counters</Link>}

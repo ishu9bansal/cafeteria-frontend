@@ -2,14 +2,12 @@ import { useEffect, useState } from "react";
 import { CounterCard } from "./Counter";
 import { retryApi } from "../utils";
 
-export const HomePage = ({ merchantId }) => {
+export const HomePage = () => {
     const [counters, setCounters] = useState([]);
-    const title = merchantId ? 'My Counters' : 'Home Page';
-    const query = merchantId ? `?merchants=${merchantId}` : '';
 
-    const fetchCounters = async (filters) => {
+    const fetchCounters = async () => {
         try {
-            const counters = await retryApi('get', '/counters' + filters);
+            const counters = await retryApi('get', '/counters');
             setCounters(counters);
         } catch (err) {
             console.error('Error fetching counters:', err);
@@ -17,12 +15,12 @@ export const HomePage = ({ merchantId }) => {
     }
 
     useEffect(() => {
-        fetchCounters(query);
-    }, [query]);
+        fetchCounters();
+    }, []);
 
     return (
         <div>
-            <h1>{title}</h1>
+            <h1>Home Page</h1>
             <div>
                 {counters.map(counter => <CounterCard key={counter._id} counter={counter} />)}
             </div>

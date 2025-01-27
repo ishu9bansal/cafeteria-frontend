@@ -74,8 +74,7 @@ export const CounterCard = ({ counter, handleDelete, handleSave }) => {
     );
 };
 
-export const ManageCountersPage = () => {
-    const [counters, setCounters] = useState([]);   // TODO: move to admin slice
+export const CountersAdminView = ({ counters, fetchCounters }) => {
     const [counterName, setCounterName] = useState('');
     const dispatch = useDispatch();
 
@@ -85,15 +84,6 @@ export const ManageCountersPage = () => {
             dispatch(setUsers(users));
         } catch (err) {
             console.error('Error fetching users:', err);
-        }
-    };
-
-    const fetchCounters = async () => {
-        try {
-            const countersArr = await retryApi('get', '/counters');
-            setCounters(countersArr);
-        } catch (err) {
-            console.error('Error fetching counters:', err);
         }
     };
 
@@ -131,7 +121,6 @@ export const ManageCountersPage = () => {
 
     return (
         <div className="manage-counters">
-            <h1>Manage Counters</h1>
             <input type="text" placeholder="Name of the new counter..." value={counterName} onChange={(e) => setCounterName(e.target.value)} />
             <button disabled={counterName.trim().length === 0} onClick={() => addCounter(counterName)}>
                 Add New Counter

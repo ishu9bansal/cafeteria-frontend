@@ -6,11 +6,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setLoading, setUser } from './slices/authSlice';
 import { setCart } from './slices/cartSlice';
 import { HomePage } from './components/Home';
-import { CounterPage } from './components/Counter';
+import { CounterPage, ManageCounters } from './components/Counter';
 import { ProfilePage } from './components/Profile';
 import { CartPage } from './components/Cart';
 import { UsersPage } from './components/User';
-import { ManageCountersPage } from './components/Admin';
 import { Auth, Login, Register } from './components/Auth';
 import { retryApi } from './utils';
 
@@ -47,13 +46,13 @@ const App = () => {
     <Router>
       <Routes>
         <Route element={<Navbar />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/counter" element={<CounterPage />} />
           <Route element={<Auth />}>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/counter" element={<CounterPage />} />
             <Route path="/cart" element={<CartPage />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/users" element={<UsersPage />} />
-            <Route path="/counters" element={<ManageCountersPage />} />
+            <Route path="/counters" element={<ManageCounters />} />
           </Route>
         </Route>
         <Route path="/login" element={<Login />} />
