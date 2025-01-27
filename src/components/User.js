@@ -70,7 +70,7 @@ export const UsersPage = () => {
 
     const onChangeRole = async (userId, role) => {
         try {
-            const user = await retryApi('get', `/users${userId}`, { role });
+            const user = await retryApi('put', `/users/${userId}`, { role });
             const updatedUsers = users.map(u => u._id === user._id ? user : u);
             setUsers(updatedUsers);
         }

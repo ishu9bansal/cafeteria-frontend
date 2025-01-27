@@ -99,7 +99,7 @@ export const ManageCountersPage = () => {
 
     const addCounter = async (name) => {
         try {
-            await retryApi('get', '/counters', { name });
+            await retryApi('post', '/counters', { name });
             setCounterName("");
             fetchCounters();
         } catch (err) {
