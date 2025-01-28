@@ -48,7 +48,7 @@ export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish 
     };
     const deleteDish = async () => {
         try {
-            const dish = await retryApi('delte', `/counter/${dish.counter}/${dish._id}`);
+            await retryApi('delte', `/counter/${dish.counter}/${dish._id}`);
             onDeleteDish(dish._id);
         } catch (err) {
             console.error('Error deleting dish:', err);

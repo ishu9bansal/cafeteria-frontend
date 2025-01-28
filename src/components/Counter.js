@@ -31,9 +31,8 @@ export const CounterPage = () => {
     const [showForm, setShowForm] = useState(false);
     const dispatch = useDispatch();
 
-    const fetchDishes = async (counterId) => {
+    const fetchDishes = async () => {
         try {
-
             const dishes = await retryApi('get', fetchDishesApi);
             dispatch(setDishes(dishes));
         } catch (err) {
@@ -42,9 +41,9 @@ export const CounterPage = () => {
     }
 
     useEffect(() => {
-        fetchDishes(counterId)
+        fetchDishes()
         return () => dispatch(setDishes([]));
-    }, [counterId]);
+    }, []);
 
     const handleDishCreated = (newDish) => {
         dispatch(setDishes([...dishes, newDish])); // Add the new dish to the existing list
