@@ -11,16 +11,17 @@ import { ProfilePage } from './components/Profile';
 import { CartPage } from './components/Cart';
 import { UsersPage } from './components/User';
 import { Auth, Login, Register } from './components/Auth';
-import { retryApi } from './utils';
+import { useRetryApi } from './hooks';
 
 const App = () => {
   const user = useSelector(state => state.auth.user);
   const loading = useSelector(state => state.auth.loading);
   const dispatch = useDispatch();
+  const retryGetApi = useRetryApi('get');
   const fetchUser = async () => {
     dispatch(setLoading(true));
     try {
-      const user = await retryApi('get', '/cart');
+      const user = await retryGetApi('/cart');
       const cart = [...user.cart];
       delete (user.cart);
       dispatch(setUser(user));

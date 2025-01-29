@@ -1,9 +1,10 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import { authCall, retryApi } from '../utils';
+import { authCall } from '../utils';
 import { setUser } from '../slices/authSlice';
 import { setCart } from '../slices/cartSlice';
+import { useRetryApi } from '../hooks';
 
 export function Auth() {
     const user = useSelector(state => state.auth.user);
@@ -20,6 +21,7 @@ export function Login() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const retryGetApi = useRetryApi('get');
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
@@ -27,7 +29,7 @@ export function Login() {
 
     const fetchUser = async () => {
         try {
-            const user = await retryApi('get', '/cart');
+            const user = await retryGetApi('/cart');
             const cart = [...user.cart];
             delete (user.cart);
             dispatch(setUser(user));

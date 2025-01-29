@@ -1,15 +1,17 @@
 import { useDispatch, useSelector } from "react-redux";
 import { setCart } from "../slices/cartSlice";
-import { retryApi } from "../utils";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useRetryApi } from "../hooks";
 
 const CartItem = ({ item, showError }) => {
     const dispatch = useDispatch();
+    const retryPatchCall = useRetryApi('patch');
+    const retryDeleteCall = useRetryApi('delete');
 
     const onRemove = async () => {
         try {
-            const cart = await retryApi('delete', `/cart/${item.dish._id}`);
+            const cart = await retryDeleteCall(`/cart/${item.dish._id}`);
             dispatch(setCart(cart));
         }
         catch (err) {
@@ -22,7 +24,7 @@ const CartItem = ({ item, showError }) => {
 
     const onChangeQuantity = async (inc) => {
         try {
-            const cart = await retryApi('patch', `/cart/${item.dish._id}`, { changeQuantity: inc });
+            const cart = await retryPatchCall(`/cart/${item.dish._id}`, { changeQuantity: inc });
             dispatch(setCart(cart));
         }
         catch (err) {
@@ -50,6 +52,7 @@ const CartItem = ({ item, showError }) => {
 
 export const CartPage = () => {
     const dispatch = useDispatch();
+    const retryDeleteCall = useRetryApi('delete');
     const cart = useSelector(state => state.cart.items);
     const total = cart.reduce((acc, item) => (acc + item.quantity * item.dish.price), 0);
     const [error, setError] = useState("");
@@ -60,7 +63,7 @@ export const CartPage = () => {
 
     const onEmptyCart = async () => {
         try {
-            const cart = await retryApi('delete', `/cart`);
+            const cart = await retryDeleteCall(`/cart`);
             dispatch(setCart(cart));
         }
         catch (err) {

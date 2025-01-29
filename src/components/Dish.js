@@ -1,8 +1,8 @@
 import { setCart } from "../slices/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
-import { retryApi } from "../utils";
 import { useNavigate } from "react-router-dom";
+import { useRetryApi } from "../hooks";
 
 export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish }) => {
     const cartDishes = useSelector(state => state.cart.items.map(item => item.dish._id));
@@ -15,6 +15,10 @@ export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish 
         price: dish.price,
         inStock: dish.inStock,
     });
+    const retryPostApi = useRetryApi('post');
+    const retryPutApi = useRetryApi('put');
+    const retryDeleteApi = useRetryApi('delete');
+
 
     const goToCart = () => {
         navigate('/cart');
@@ -22,7 +26,7 @@ export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish 
 
     const onAddToCart = async () => {
         try {
-            const cart = await retryApi('post', `/cart/${dish._id}`);
+            const cart = await retryPostApi(`/cart/${dish._id}`);
             dispatch(setCart(cart));
         } catch (err) {
             console.error('Error adding to cart:', err);
@@ -39,7 +43,7 @@ export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish 
 
     const saveChanges = async () => {
         try {
-            const updatedDish = await retryApi('put', `/counter/${dish.counter}/${dish._id}`, editForm);
+            const updatedDish = await retryPutApi(`/counter/${dish.counter}/${dish._id}`, editForm);
             onUpdateDish(updatedDish); // Update the dish in the parent component
             setIsEditing(false);
         } catch (err) {
@@ -48,7 +52,7 @@ export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish 
     };
     const deleteDish = async () => {
         try {
-            await retryApi('delte', `/counter/${dish.counter}/${dish._id}`);
+            await retryDeleteApi(`/counter/${dish.counter}/${dish._id}`);
             onDeleteDish(dish._id);
         } catch (err) {
             console.error('Error deleting dish:', err);
@@ -124,6 +128,7 @@ export const DishForm = ({ counterId, onClose, onDishCreated }) => {
         price: '',
         inStock: true,
     });
+    const retryPostApi = useRetryApi('post');
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
@@ -136,7 +141,7 @@ export const DishForm = ({ counterId, onClose, onDishCreated }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const dish = await retryApi('post', `/counter/${counterId}`, formData);
+            const dish = await retryPostApi(`/counter/${counterId}`, formData);
             onDishCreated(dish); // Inform parent component about the new dish
             onClose(); // Close the form/modal
         } catch (err) {

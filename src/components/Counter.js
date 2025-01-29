@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { DishCard, DishForm } from "./Dish";
 import { useDispatch, useSelector } from "react-redux";
 import { setCounter, setDishes } from "../slices/counterSlice";
-import { retryApi } from "../utils";
 import { ROLE } from "../constants";
 import { CountersAdminView } from "./Admin";
+import { useRetryApi } from "../hooks";
 
 export const CounterCard = ({ counter }) => {
     const navigate = useNavigate();
@@ -29,11 +29,12 @@ export const CounterPage = () => {
     const fetchDishesApi = canEdit ? `/counter/${counterId}` : `/dishes?counter=${counterId}`;
     const dishes = useSelector(state => state.counter.dishes);
     const [showForm, setShowForm] = useState(false);
+    const retryGetApi = useRetryApi('get');
     const dispatch = useDispatch();
 
     const fetchDishes = async () => {
         try {
-            const dishes = await retryApi('get', fetchDishesApi);
+            const dishes = await retryGetApi(fetchDishesApi);
             dispatch(setDishes(dishes));
         } catch (err) {
             console.error('Error fetching dishes:', err)
@@ -84,10 +85,11 @@ export const ManageCounters = () => {
     const user = useSelector(state => state.auth.user);
     const isMerchantView = user?.role === ROLE.Merchant;
     const query = isMerchantView ? `?merchants=${user._id}` : '';
+    const retryGetApi = useRetryApi('get');
 
     const fetchCounters = async (filters = '') => {
         try {
-            const counters = await retryApi('get', '/counters' + filters);
+            const counters = await retryGetApi('/counters' + filters);
             setCounters(counters);
         } catch (err) {
             console.error('Error fetching counters:', err);

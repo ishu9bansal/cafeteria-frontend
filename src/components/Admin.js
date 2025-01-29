@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setUsers } from "../slices/counterSlice";
-import { retryApi } from "../utils";
+import { useRetryApi } from "../hooks";
 
 const StaticCounterCard = ({ counter, setEditing, handleDelete }) => {
     return (<div className="admin-counter-card">
@@ -78,10 +78,14 @@ export const CounterCard = ({ counter, handleDelete, handleSave }) => {
 export const CountersAdminView = ({ counters, fetchCounters }) => {
     const [counterName, setCounterName] = useState('');
     const dispatch = useDispatch();
+    const retryGetApi = useRetryApi('get');
+    const retryPostApi = useRetryApi('post');
+    const retryPutApi = useRetryApi('put');
+    const retryDeleteApi = useRetryApi('delete');
 
     const fetchUsers = async () => {
         try {
-            const users = await retryApi('get', '/users');
+            const users = await retryGetApi('/users');
             dispatch(setUsers(users));
         } catch (err) {
             console.error('Error fetching users:', err);
@@ -90,7 +94,7 @@ export const CountersAdminView = ({ counters, fetchCounters }) => {
 
     const addCounter = async (name) => {
         try {
-            await retryApi('post', '/counters', { name });
+            await retryPostApi('/counters', { name });
             setCounterName("");
             fetchCounters();
         } catch (err) {
@@ -100,7 +104,7 @@ export const CountersAdminView = ({ counters, fetchCounters }) => {
 
     const updateCounter = async (counter) => {
         try {
-            await retryApi('put', `/counters/${counter._id}`, counter);
+            await retryPutApi(`/counters/${counter._id}`, counter);
             fetchCounters();
         } catch (err) {
             console.error('Error updating counter:', err);
@@ -109,7 +113,7 @@ export const CountersAdminView = ({ counters, fetchCounters }) => {
 
     const deleteCounter = async (counterId) => {
         try {
-            await retryApi('delete', `/counters/${counterId}`);
+            await retryDeleteApi(`/counters/${counterId}`);
             fetchCounters();
         } catch (err) {
             console.error('Error deleting counter:', err);

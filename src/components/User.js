@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import placeHolderProfilePic from '../assets/profileImg.jpg'
 import { ROLE } from "../constants";
-import { retryApi } from "../utils";
+import { useRetryApi } from "../hooks";
 
 const UserItem = ({ user, onRoleChange }) => {
     const [selectedRole, setSelectedRole] = useState(user.role);
@@ -53,10 +53,12 @@ const UserItem = ({ user, onRoleChange }) => {
 
 export const UsersPage = () => {
     const [users, setUsers] = useState([]);
+    const retryGetApi = useRetryApi('get');
+    const retryPutApi = useRetryApi('put');
 
     const fetchUsers = async () => {
         try {
-            const usersArr = await retryApi('get', `/users`);
+            const usersArr = await retryGetApi(`/users`);
             setUsers(usersArr);
         }
         catch (err) {
@@ -70,7 +72,7 @@ export const UsersPage = () => {
 
     const onChangeRole = async (userId, role) => {
         try {
-            const user = await retryApi('put', `/users/${userId}`, { role });
+            const user = await retryPutApi(`/users/${userId}`, { role });
             const updatedUsers = users.map(u => u._id === user._id ? user : u);
             setUsers(updatedUsers);
         }
