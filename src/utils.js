@@ -19,18 +19,20 @@ function axiosAuthConfig(method, url, body) {
 }
 
 export async function retryApi(method, url, body) {
-    try {
-        const response = await axios.request(axiosAuthConfig(method, url, body));
-        return response.data;
-    } catch (err) {
-        const errorMessage = err?.response?.data?.message;
-        if (errorMessage !== 'jwt expired') {
-            throw err;
-        }
-        await authCall.token();
-        const response = await axios.request(axiosAuthConfig(method, url, body));
-        return response.data;
-    }
+    return await retryLogic(
+        async () => {
+            const response = await axios.request(axiosAuthConfig(method, url, body));
+            return response.data;
+        },
+        async (err) => {
+            const errorMessage = err?.response?.data?.message;
+            if (errorMessage !== 'jwt expired') {
+                throw err;
+            }
+            await authCall.token();
+        },
+        1
+    );
 }
 
 export const authCall = {
@@ -65,4 +67,18 @@ export const authCall = {
     }
 }
 
-// TODO: write a general retry logic
+// this will retry the callback in case of error
+// the error thrown from the callback will be passed to the errHandler method, which might throw error itself
+// Incase handler throws an error it stops the retries, otherwise it will try the callbacks again
+// Note: retries === 0 means there will be no error handling, retries === 1 means one extra time callback will be tried
+const retryLogic = async (callback, errHandler, retries = 1) => {
+    try {
+        return await callback();
+    } catch (err) {
+        if (retries <= 0) {
+            throw err;
+        }
+        await errHandler(err);
+        return await retryLogic(callback, errHandler, --retries);
+    }
+}
