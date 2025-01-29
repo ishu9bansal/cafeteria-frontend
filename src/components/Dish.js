@@ -131,6 +131,7 @@ export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish 
 
 
 export const DishForm = ({ counterId, onClose, onDishCreated }) => {
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         price: '',
@@ -148,13 +149,15 @@ export const DishForm = ({ counterId, onClose, onDishCreated }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
         try {
             const dish = await retryPostApi(`/counter/${counterId}`, formData);
-            onDishCreated(dish); // Inform parent component about the new dish
+            await onDishCreated(dish); // Inform parent component about the new dish
             onClose(); // Close the form/modal
         } catch (err) {
             console.error('Error creating dish:', err);
         }
+        setLoading(false);
     };
 
     return (
@@ -166,6 +169,7 @@ export const DishForm = ({ counterId, onClose, onDishCreated }) => {
                 placeholder="Dish Name"
                 value={formData.name}
                 onChange={handleChange}
+                disabled={loading}
                 required
             />
             <input
@@ -175,6 +179,7 @@ export const DishForm = ({ counterId, onClose, onDishCreated }) => {
                 value={formData.price}
                 onChange={handleChange}
                 min="0"
+                disabled={loading}
                 required
             />
             <label>
@@ -183,12 +188,13 @@ export const DishForm = ({ counterId, onClose, onDishCreated }) => {
                     name="inStock"
                     checked={formData.inStock}
                     onChange={handleChange}
+                    disabled={loading}
                 />
                 In Stock
             </label>
             <br />
-            <button type="submit">Create Dish</button>
-            <button type="button" onClick={onClose}>Cancel</button>
+            <button disabled={loading} type="submit">Create Dish</button>
+            <button disabled={loading} type="button" onClick={onClose}>Cancel</button>
         </form>
     );
 };

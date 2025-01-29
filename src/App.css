@@ -178,6 +178,11 @@ button.new-dish {
   background-color: #ff4d4f;
 }
 
+.dish-form button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
 
 /* CartItem */
 .cart-item {
