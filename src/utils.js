@@ -3,6 +3,8 @@ import axios from "axios";
 const BASE_URL = 'http://localhost:5050';
 const AUTH_BASE_URL = 'http://localhost:5050/auth';
 
+export const REFRESH_TOKEN_ERROR = 'refresh token failed';
+
 function axiosAuthConfig(method, url, body) {
     const token = localStorage.getItem('token');
     // const userId = localStorage.getItem('userId');
@@ -19,20 +21,26 @@ function axiosAuthConfig(method, url, body) {
 }
 
 export async function retryApi(method, url, body) {
-    return await retryLogic(
-        async () => {
-            const response = await axios.request(axiosAuthConfig(method, url, body));
-            return response.data;
-        },
-        async (err) => {
-            const errorMessage = err?.response?.data?.message;
-            if (errorMessage !== 'jwt expired') {
-                throw err;
-            }
+    const apiCall = async () => {
+        const response = await axios.request(axiosAuthConfig(method, url, body));
+        return response.data;
+    };
+
+    const refreshToken = async () => {
+        try {
             await authCall.token();
-        },
-        1
-    );
+        } catch (err) {
+            throw new Error(REFRESH_TOKEN_ERROR, { cause: err });
+        }
+    };
+
+    return await retryLogic(apiCall, async (err) => {
+        const errorMessage = err?.response?.data?.message;
+        if (errorMessage !== 'jwt expired') {
+            throw err;
+        }
+        await refreshToken();
+    });
 }
 
 export const authCall = {
