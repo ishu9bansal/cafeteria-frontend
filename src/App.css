@@ -183,6 +183,11 @@ button.new-dish {
   text-align: center;
 }
 
+.cart-item button:disabled {
+  opacity: 80%;
+  cursor: not-allowed;
+}
+
 .cart-item-quantity {
   display: flex;
   align-items: center;
