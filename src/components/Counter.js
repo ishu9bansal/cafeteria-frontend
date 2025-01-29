@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { DishCard, DishForm } from "./Dish";
 import { useDispatch, useSelector } from "react-redux";
 import { setCounter, setDishes } from "../slices/counterSlice";
@@ -9,10 +9,8 @@ import { useRetryApi } from "../hooks";
 
 export const CounterCard = ({ counter }) => {
     const navigate = useNavigate();
-    const dispatch = useDispatch();
     const onClick = () => {
-        dispatch(setCounter(counter))
-        navigate(`/counter`)
+        navigate(`/counter/${counter._id}`);
     };
     return (
         <div className="counter-card" onClick={onClick}>
@@ -23,19 +21,20 @@ export const CounterCard = ({ counter }) => {
 };
 
 export const CounterPage = () => {
-    const counter = useSelector(state => state.counter.details);
-    const counterId = counter._id;
+    const { counterId } = useParams();
     const canEdit = useSelector(selectCanUserEditCounter);
     const fetchDishesApi = canEdit ? `/counter/${counterId}` : `/dishes?counter=${counterId}`;
     const dishes = useSelector(state => state.counter.dishes);
+    const counter = useSelector(state => state.counter.details);
     const [showForm, setShowForm] = useState(false);
     const retryGetApi = useRetryApi('get');
     const dispatch = useDispatch();
 
     const fetchDishes = async () => {
         try {
-            const dishes = await retryGetApi(fetchDishesApi);
+            const { dishes, counter } = await retryGetApi(fetchDishesApi);
             dispatch(setDishes(dishes));
+            dispatch(setCounter(counter));
         } catch (err) {
             console.error('Error fetching dishes:', err)
         }
@@ -43,7 +42,10 @@ export const CounterPage = () => {
 
     useEffect(() => {
         fetchDishes()
-        return () => dispatch(setDishes([]));
+        return () => {
+            dispatch(setDishes([]));
+            dispatch(setCounter(null));
+        };
     }, []);
 
     const handleDishCreated = (newDish) => {
@@ -62,7 +64,7 @@ export const CounterPage = () => {
 
     return (
         <div>
-            <h1>{counter.name}</h1>
+            <h1>{counter?.name || "Loading..."}</h1>
             {canEdit &&
                 <button className="new-dish" onClick={() => setShowForm(true)}>Add New Dish</button>}
 
@@ -123,5 +125,5 @@ const selectCanUserEditCounter = (state) => {
     const { user } = state.auth;
     const { details: counter } = state.counter;
 
-    return user && counter && counter.merchants?.map(m => m._id).includes(user._id);
+    return user && counter && counter.merchants?.includes(user._id);
 };

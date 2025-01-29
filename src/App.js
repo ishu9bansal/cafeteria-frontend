@@ -47,7 +47,7 @@ const App = () => {
     <Router>
       <Routes>
         <Route element={<Navbar />}>
-          <Route path="/counter" element={<CounterPage />} />
+          <Route path="/counter/:counterId" element={<CounterPage />} />
           <Route element={<Auth />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/cart" element={<CartPage />} />
