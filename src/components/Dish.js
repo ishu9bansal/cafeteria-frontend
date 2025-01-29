@@ -7,6 +7,7 @@ import { useRetryApi } from "../hooks";
 export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish }) => {
     const cartDishes = useSelector(state => state.cart.items.map(item => item.dish._id));
     const cartLoading = useSelector(state => state.cart.loading);
+    const [cardLoading, setCardLoading] = useState(false);
     const existInCart = cartDishes.includes(dish._id);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -45,25 +46,30 @@ export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish 
     };
 
     const saveChanges = async () => {
+        setCardLoading(true);
         try {
-            const updatedDish = await retryPutApi(`/counter/${dish.counter}/${dish._id}`, editForm);
-            onUpdateDish(updatedDish); // Update the dish in the parent component
             setIsEditing(false);
+            const updatedDish = await retryPutApi(`/counter/${dish.counter}/${dish._id}`, editForm);
+            await onUpdateDish(updatedDish); // Update the dish in the parent component
         } catch (err) {
+            setIsEditing(true);
             console.error('Error updating dish:', err);
         }
+        setCardLoading(false);
     };
     const deleteDish = async () => {
+        setCardLoading(true);
         try {
             await retryDeleteApi(`/counter/${dish.counter}/${dish._id}`);
-            onDeleteDish(dish._id);
+            await onDeleteDish(dish._id);
         } catch (err) {
             console.error('Error deleting dish:', err);
         }
+        setCardLoading(false);
     };
 
     return (
-        <div className={`dish-card ${isEditing ? 'editing' : ''}`}>
+        <div className={`dish-card ${isEditing ? 'editing' : ''} ${cardLoading ? 'disabled' : ''}`}>
             {isEditing ? (
                 <>
                     <input
@@ -111,8 +117,8 @@ export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish 
                         <button hidden></button>
                     </>)}
                     {isEditable && (<>
-                        <button onClick={() => setIsEditing(true)}>Edit</button>
-                        <button onClick={deleteDish}>Delete</button>
+                        <button disabled={cardLoading} onClick={() => setIsEditing(true)}>Edit</button>
+                        <button disabled={cardLoading} onClick={deleteDish}>Delete</button>
                     </>)}
                 </>
             )

@@ -127,6 +127,16 @@ button.new-dish {
   background-color: #ff4d4f;
 }
 
+.dish-card button:last-child:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.dish-card.disabled {
+  opacity: 80%;
+  cursor: not-allowed;
+}
+
 /* Dish Form */
 .dish-form {
   background-color: #f9f9f9;
