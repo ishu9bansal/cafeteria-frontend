@@ -55,10 +55,13 @@ export const UsersPage = () => {
     const [users, setUsers] = useState([]);
     const retryGetApi = useRetryApi('get');
     const retryPutApi = useRetryApi('put');
+    const ROLES = Object.keys(ROLE);
+    const [roleFilter, setRoleFilter] = useState();
+    const filter = roleFilter ? `?role=${roleFilter}` : '';
 
     const fetchUsers = async () => {
         try {
-            const usersArr = await retryGetApi(`/users`);
+            const usersArr = await retryGetApi('/users' + filter);
             setUsers(usersArr);
         }
         catch (err) {
@@ -68,7 +71,7 @@ export const UsersPage = () => {
 
     useEffect(() => {
         fetchUsers();
-    }, []);
+    }, [filter]);
 
     const onChangeRole = async (userId, role) => {
         try {
@@ -81,9 +84,18 @@ export const UsersPage = () => {
         }
     };
 
+    const handleFilterChange = (e) => {
+        setRoleFilter(e.target.value || undefined);
+    };
+
     return (
         <div className="users-page">
             <h1 className="page-title">Users</h1>
+            <label>Filter by role: </label>
+            <select onChange={handleFilterChange} value={roleFilter}>
+                <option value={""}>All</option>
+                {ROLES.map(role => <option key={role} value={role}>{role}</option>)}
+            </select>
             <div className="user-list">
                 {users.map(user => (
                     <UserItem key={user._id} user={user} onRoleChange={onChangeRole} />
