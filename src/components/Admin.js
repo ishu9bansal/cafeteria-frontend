@@ -3,8 +3,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUsers } from "../slices/counterSlice";
 import { useRetryApi } from "../hooks";
 
-const StaticCounterCard = ({ counter, setEditing, handleDelete }) => {
-    return (<div className="admin-counter-card">
+const StaticCounterCard = ({ counter, setEditing, handleDelete, loading }) => {
+    const className = "admin-counter-card" + (loading ? " disabled" : "");
+    return (<div className={className}>
         <h3>{counter.name}</h3>
         <p><strong>Merchants:</strong></p>
         <ul>
@@ -13,8 +14,8 @@ const StaticCounterCard = ({ counter, setEditing, handleDelete }) => {
             </li>))}
         </ul>
         <div className="button-group">
-            <button onClick={() => setEditing(true)}>Edit</button>
-            <button onClick={handleDelete}>Delete</button>
+            <button disabled={loading} onClick={() => setEditing(true)}>Edit</button>
+            <button disabled={loading} onClick={handleDelete}>Delete</button>
         </div>
 
     </div>);
@@ -76,16 +77,33 @@ const EditingCounterCard = ({ counter, handleSave, onCancel }) => {
 };
 
 export const CounterCard = ({ counter, handleDelete, handleSave }) => {
+    const [loading, setLoading] = useState(false);
     const [editing, setEditing] = useState(false);
 
-    const onHandleSave = ({ name, merchants }) => {
+    const onHandleSave = async ({ name, merchants }) => {
         setEditing(false);
-        handleSave({ _id: counter._id, name, merchants: merchants.map(m => m._id) });
+        setLoading(true);
+        try {
+            await handleSave({ _id: counter._id, name, merchants: merchants.map(m => m._id) });
+        } catch (err) {
+            console.error(err);
+        }
+        setLoading(false);
     }
+
+    const onHandleDelete = async () => {
+        setLoading(true);
+        try {
+            await handleDelete(counter._id);
+        } catch (err) {
+            console.error(err);
+        }
+        setLoading(false);
+    };
 
     return (editing
         ? <EditingCounterCard counter={counter} handleSave={onHandleSave} onCancel={() => setEditing(false)} />
-        : <StaticCounterCard counter={counter} setEditing={setEditing} handleDelete={() => handleDelete(counter._id)} />
+        : <StaticCounterCard counter={counter} setEditing={setEditing} handleDelete={onHandleDelete} loading={loading} />
     );
 };
 
@@ -110,7 +128,7 @@ export const CountersAdminView = ({ counters, fetchCounters }) => {
         try {
             await retryPostApi('/counters', { name });
             setCounterName("");
-            fetchCounters();
+            await fetchCounters();
         } catch (err) {
             console.error('Error adding counter:', err);
         }
@@ -119,7 +137,7 @@ export const CountersAdminView = ({ counters, fetchCounters }) => {
     const updateCounter = async (counter) => {
         try {
             await retryPutApi(`/counters/${counter._id}`, counter);
-            fetchCounters();
+            await fetchCounters();
         } catch (err) {
             console.error('Error updating counter:', err);
         }
@@ -128,7 +146,7 @@ export const CountersAdminView = ({ counters, fetchCounters }) => {
     const deleteCounter = async (counterId) => {
         try {
             await retryDeleteApi(`/counters/${counterId}`);
-            fetchCounters();
+            await fetchCounters();
         } catch (err) {
             console.error('Error deleting counter:', err);
         }

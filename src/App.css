@@ -427,6 +427,11 @@ button.new-dish {
   width: 500px;
 }
 
+.admin-counter-card.disabled {
+  opacity: 60%;
+  cursor: not-allowed;
+}
+
 .admin-counter-card input[type="text"] {
   width: 90%;
   padding: 8px;
