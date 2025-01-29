@@ -1,4 +1,4 @@
-import { setCart } from "../slices/cartSlice";
+import { setCart, setLoading } from "../slices/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import { useRetryApi } from "../hooks";
 
 export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish }) => {
     const cartDishes = useSelector(state => state.cart.items.map(item => item.dish._id));
+    const cartLoading = useSelector(state => state.cart.loading);
     const existInCart = cartDishes.includes(dish._id);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -25,12 +26,14 @@ export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish 
     }
 
     const onAddToCart = async () => {
+        dispatch(setLoading(true));
         try {
             const cart = await retryPostApi(`/cart/${dish._id}`);
             dispatch(setCart(cart));
         } catch (err) {
             console.error('Error adding to cart:', err);
         }
+        dispatch(setLoading(false));
     };
 
     const handleEditChange = (e) => {
@@ -102,7 +105,7 @@ export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish 
                             ? (<button className="go-to" onClick={goToCart}>
                                 Go to Cart
                             </button>)
-                            : (<button disabled={!dish.inStock} onClick={onAddToCart}>
+                            : (<button disabled={!dish.inStock || cartLoading} onClick={onAddToCart}>
                                 Add to Cart
                             </button>)
                         }
