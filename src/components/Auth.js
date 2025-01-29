@@ -1,10 +1,8 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Link, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { authCall } from '../utils';
-import { setUser } from '../slices/authSlice';
-import { setCart } from '../slices/cartSlice';
-import { useRetryApi } from '../hooks';
+import { useAuthLogin, useRetryApi } from '../hooks';
 
 export function Auth() {
     const user = useSelector(state => state.auth.user);
@@ -21,30 +19,17 @@ export function Login() {
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
-    const retryGetApi = useRetryApi('get');
-    const dispatch = useDispatch();
+    const login = useAuthLogin();
     const navigate = useNavigate();
     const location = useLocation();
     const nextPage = location.state?.from || '/';
 
-    const fetchUser = async () => {
-        try {
-            const user = await retryGetApi('/cart');
-            const cart = [...user.cart];
-            delete (user.cart);
-            dispatch(setUser(user));
-            dispatch(setCart(cart));
-        } catch (err) {
-            console.error('Error fetching cart:', err);
-        }
-    };
     const handleLogin = async (e) => {
         e.preventDefault();
         setError('');
         setLoading(true);
         try {
-            await authCall.login(email, password);
-            await fetchUser();
+            await login(email, password);
             navigate(nextPage, { replace: true });
         } catch (err) {
             console.log(err);

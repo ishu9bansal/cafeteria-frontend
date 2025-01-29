@@ -1,19 +1,17 @@
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { authCall } from "../utils";
-import { setUser } from "../slices/authSlice";
+import { useSelector } from "react-redux";
+import { useAuthLogout } from "../hooks";
 
 export const ProfilePage = () => {
     const user = useSelector(state => state.auth.user || {});
     const [loading, setLoading] = useState(false);
     const buttonText = loading ? 'Logging out..' : 'Logout';
-    const dispatch = useDispatch();
+    const logout = useAuthLogout();
 
     const handleLogout = async (e) => {
         setLoading(true);
         try {
-            await authCall.logout();
-            dispatch(setUser(null));
+            await logout();
         } catch (err) {
             console.error(err);
         } finally {
