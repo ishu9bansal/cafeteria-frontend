@@ -53,6 +53,7 @@ const UserItem = ({ user, onRoleChange }) => {
 
 export const UsersPage = () => {
     const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(false);
     const retryGetApi = useRetryApi('get');
     const retryPutApi = useRetryApi('put');
     const ROLES = Object.keys(ROLE);
@@ -60,6 +61,7 @@ export const UsersPage = () => {
     const filter = roleFilter ? `?role=${roleFilter}` : '';
 
     const fetchUsers = async () => {
+        setLoading(true);
         try {
             const usersArr = await retryGetApi('/users' + filter);
             setUsers(usersArr);
@@ -67,10 +69,12 @@ export const UsersPage = () => {
         catch (err) {
             console.error('Error fetching users:', err)
         }
+        setLoading(false);
     };
 
     useEffect(() => {
         fetchUsers();
+        return () => setUsers([]);
     }, [filter]);
 
     const onChangeRole = async (userId, role) => {
@@ -96,6 +100,7 @@ export const UsersPage = () => {
                 <option value={""}>All</option>
                 {ROLES.map(role => <option key={role} value={role}>{role}</option>)}
             </select>
+            {loading && <h1>Loading...</h1>}
             <div className="user-list">
                 {users.map(user => (
                     <UserItem key={user._id} user={user} onRoleChange={onChangeRole} />
