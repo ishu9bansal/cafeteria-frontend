@@ -24,11 +24,9 @@ const EditingCounterCard = ({ counter, handleSave, onCancel }) => {
     const [name, setName] = useState(counter.name);
     const [merchants, setMerchants] = useState(counter.merchants);
     const [query, setQuery] = useState("");
-    const users = useSelector(state => state.counter.users);    // TODO: move this search to backend
-    const filteredUsers = users
-        .filter(u => !merchants.map(m => m._id).includes(u._id))
-        .filter(u => u.name.toLowerCase().includes(query.toLowerCase()));
-    const showDropdown = query.length >= 1;
+    const [results, setResults] = useState([]);
+    const retryGetApi = useRetryApi('get');
+    const filteredUsers = results.filter(u => !merchants.map(m => m._id).includes(u._id));
     const handleDeleteUser = (merchantId) => {
         const updatedMerchants = merchants.filter(m => m._id !== merchantId);
         setMerchants(updatedMerchants);
@@ -37,6 +35,22 @@ const EditingCounterCard = ({ counter, handleSave, onCancel }) => {
         const updatedMerchants = [...merchants, user]
         setMerchants(updatedMerchants);
     }
+
+    const fetchUsers = async (search) => {
+        try {
+            const searchResults = await retryGetApi(`/users?search=${search}`);
+            setResults(searchResults);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    useEffect(() => {
+        if (query.trim()) {
+            fetchUsers(query.trim().toLowerCase());
+        }
+        return () => setResults([]);
+    }, [query]);
 
     return (<div className="admin-counter-card">
         <h3><input type="text" value={name} onChange={(e) => setName(e.target.value)} /></h3>
@@ -47,7 +61,7 @@ const EditingCounterCard = ({ counter, handleSave, onCancel }) => {
             </li>))}
         </ul>
         <input placeholder="Start typing to search for merchants" type="text" value={query} onChange={(e) => setQuery(e.target.value)} />
-        {showDropdown && <div className="dropdown">
+        {filteredUsers.length > 0 && <div className="dropdown">
             {filteredUsers.map(user => (
                 <div key={user._id} onClick={() => handleAddUser(user)}>
                     {user.name} - {user.email}
