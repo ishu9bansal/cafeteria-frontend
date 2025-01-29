@@ -99,7 +99,6 @@ export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish 
                     <h4>{dish.name}</h4>
                     <p>Price: ₹{dish.price}</p>
                     <p>{dish.inStock ? 'In Stock' : 'Out of Stock'}</p>
-                    {!isEditable && <p>{dish.counter.name}</p>}
                     {!isEditable && (<>
                         {existInCart
                             ? (<button className="go-to" onClick={goToCart}>
