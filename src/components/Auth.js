@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import { Link, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { authCall } from '../utils';
-import { useAuthLogin, useRetryApi } from '../hooks';
+import { useAuthLogin } from '../hooks';
 
 export function Auth() {
     const user = useSelector(state => state.auth.user);

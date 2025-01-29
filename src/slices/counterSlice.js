@@ -5,7 +5,7 @@ const counterSlice = createSlice({
     initialState: {
         dishes: [],
         details: null,
-        users: [],
+        users: [],  // TODO: move this to admin slice
     },
     reducers: {
         setDishes: (state, action) => {

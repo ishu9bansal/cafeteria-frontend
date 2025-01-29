@@ -24,7 +24,7 @@ const EditingCounterCard = ({ counter, handleSave, onCancel }) => {
     const [name, setName] = useState(counter.name);
     const [merchants, setMerchants] = useState(counter.merchants);
     const [query, setQuery] = useState("");
-    const users = useSelector(state => state.counter.users);
+    const users = useSelector(state => state.counter.users);    // TODO: move this search to backend
     const filteredUsers = users
         .filter(u => !merchants.map(m => m._id).includes(u._id))
         .filter(u => u.name.toLowerCase().includes(query.toLowerCase()));
