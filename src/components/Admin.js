@@ -109,6 +109,7 @@ export const CounterCard = ({ counter, handleDelete, handleSave }) => {
 
 export const CountersAdminView = ({ counters, fetchCounters }) => {
     const [counterName, setCounterName] = useState('');
+    const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
     const retryGetApi = useRetryApi('get');
     const retryPostApi = useRetryApi('post');
@@ -124,14 +125,17 @@ export const CountersAdminView = ({ counters, fetchCounters }) => {
         }
     };
 
-    const addCounter = async (name) => {
+    const addCounter = async (e, name) => {
+        e.preventDefault();
+        setLoading(true);
         try {
             await retryPostApi('/counters', { name });
-            setCounterName("");
             await fetchCounters();
+            setCounterName("");
         } catch (err) {
             console.error('Error adding counter:', err);
         }
+        setLoading(false);
     };
 
     const updateCounter = async (counter) => {
@@ -158,10 +162,10 @@ export const CountersAdminView = ({ counters, fetchCounters }) => {
 
     return (
         <div className="manage-counters">
-            <input type="text" placeholder="Name of the new counter..." value={counterName} onChange={(e) => setCounterName(e.target.value)} />
-            <button disabled={counterName.trim().length === 0} onClick={() => addCounter(counterName)}>
-                Add New Counter
-            </button>
+            <form className="add-form" onSubmit={(e) => addCounter(e, counterName)}>
+                <input disabled={loading} type="text" placeholder="Name of the new counter..." value={counterName} onChange={(e) => setCounterName(e.target.value)} />
+                <input disabled={counterName.trim().length === 0 || loading} type="submit" value={"Add New Counter"} />
+            </form>
             <div>
                 {counters.map(counter => <CounterCard
                     key={counter._id}
