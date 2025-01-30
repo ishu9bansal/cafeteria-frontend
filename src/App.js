@@ -7,7 +7,7 @@ import { setLoading, setUser } from './slices/authSlice';
 import { setCart } from './slices/cartSlice';
 import { HomePage } from './pages/HomePage';
 import { CounterPage, ManageCounters } from './components/Counter';
-import { ProfilePage } from './components/Profile';
+import { ProfilePage } from './pages/ProfilePage';
 import { Auth, Login, Register } from './components/Auth';
 import { useRetryApi } from './hooks';
 import { CartPage } from './pages/CartPage';
