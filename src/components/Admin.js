@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setUsers } from "../slices/counterSlice";
 import { useRetryApi } from "../hooks";
 
 const StaticCounterCard = ({ counter, setEditing, handleDelete, loading }) => {
@@ -110,20 +108,9 @@ export const CounterCard = ({ counter, handleDelete, handleSave }) => {
 export const CountersAdminView = ({ counters, fetchCounters }) => {
     const [counterName, setCounterName] = useState('');
     const [loading, setLoading] = useState(false);
-    const dispatch = useDispatch();
-    const retryGetApi = useRetryApi('get');
     const retryPostApi = useRetryApi('post');
     const retryPutApi = useRetryApi('put');
     const retryDeleteApi = useRetryApi('delete');
-
-    const fetchUsers = async () => {
-        try {
-            const users = await retryGetApi('/users');
-            dispatch(setUsers(users));
-        } catch (err) {
-            console.error('Error fetching users:', err);
-        }
-    };
 
     const addCounter = async (e, name) => {
         e.preventDefault();
@@ -155,10 +142,6 @@ export const CountersAdminView = ({ counters, fetchCounters }) => {
             console.error('Error deleting counter:', err);
         }
     };
-    useEffect(() => {
-        fetchCounters();
-        fetchUsers();
-    }, []);
 
     return (
         <div className="manage-counters">
