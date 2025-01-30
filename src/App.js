@@ -47,7 +47,7 @@ const App = () => {
     <Router>
       <Routes>
         <Route element={<Navbar />}>
-          <Route path="/counter/:counterId" element={<CounterPage />} />
+          <Route path="/counter/:counterId" element={<CounterPage />} /> {/* TODO: handle the view changes for logged out user */}
           <Route element={<Auth />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/cart" element={<CartPage />} />

@@ -84,29 +84,31 @@ export const CounterPage = () => {
 
 export const ManageCounters = () => {
     const [counters, setCounters] = useState([]);
+    const [loading, setLoading] = useState(false);
     const user = useSelector(state => state.auth.user);
     const isMerchantView = user?.role === ROLE.Merchant;
     const query = isMerchantView ? `?merchants=${user._id}` : '';
     const retryGetApi = useRetryApi('get');
 
     const fetchCounters = async (filters = '') => {
+        setLoading(true);
         try {
             const counters = await retryGetApi('/counters' + filters);
             setCounters(counters);
         } catch (err) {
             console.error('Error fetching counters:', err);
         }
+        setLoading(false);
     }
 
     useEffect(() => {
         fetchCounters(query);
     }, [query]);
 
-    // TODO: add loading and empty state
-
     return (
         <div>
             <h1>Manage Counters</h1>
+            {loading && <h1>Loading...</h1>}
             {isMerchantView
                 ? (
                     <div>
