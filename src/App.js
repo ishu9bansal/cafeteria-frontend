@@ -8,10 +8,10 @@ import { setCart } from './slices/cartSlice';
 import { HomePage } from './components/Home';
 import { CounterPage, ManageCounters } from './components/Counter';
 import { ProfilePage } from './components/Profile';
-import { CartPage } from './components/Cart';
 import { UsersPage } from './components/User';
 import { Auth, Login, Register } from './components/Auth';
 import { useRetryApi } from './hooks';
+import { CartPage } from './pages/CartPage';
 
 const App = () => {
   const user = useSelector(state => state.auth.user);
