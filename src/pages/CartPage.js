@@ -9,7 +9,7 @@ export const CartPage = () => {
     const dispatch = useDispatch();
     const retryDeleteCall = useRetryApi('delete');
     const loading = useSelector(state => state.cart.loading);
-    const cart = useSelector(state => state.cart.items);
+    const cart = useSelector(state => state.cart.items.filter(item => item.dish));
     const total = cart.reduce((acc, item) => (acc + item.quantity * item.dish.price), 0);
     const [error, setError] = useState("");
     const showError = (msg) => {
