@@ -1,5 +1,5 @@
 import { useState } from "react";
-import placeHolderProfilePic from '../assets/profileImg.jpg'
+import placeHolderProfilePic from '../assets/profileImg.jpg';
 import { ROLE } from "../constants";
 
 export const UserItem = ({ user, onRoleChange }) => {

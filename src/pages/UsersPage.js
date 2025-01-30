@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
+import { UserItem } from "../components/User";
 import { ROLE } from "../constants";
 import { useRetryApi } from "../hooks";
-import { UserItem } from "../components/User";
 
 export const UsersPage = () => {
     const [users, setUsers] = useState([]);

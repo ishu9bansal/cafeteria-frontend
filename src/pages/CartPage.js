@@ -1,10 +1,9 @@
-import { CartItem } from "../components/Cart";
-import { useDispatch, useSelector } from "react-redux";
-import { setCart } from "../slices/cartSlice";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { CartItem } from "../components/Cart";
 import { useRetryApi } from "../hooks";
-import { setLoading } from "../slices/cartSlice";
+import { setCart, setLoading } from "../slices/cartSlice";
 
 export const CartPage = () => {
     const dispatch = useDispatch();

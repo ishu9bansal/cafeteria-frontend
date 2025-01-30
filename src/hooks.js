@@ -1,7 +1,7 @@
 import { useDispatch } from "react-redux";
-import { authCall, REFRESH_TOKEN_ERROR, retryApi } from "./utils";
 import { setUser } from "./slices/authSlice";
 import { setCart } from "./slices/cartSlice";
+import { authCall, REFRESH_TOKEN_ERROR, retryApi } from "./utils";
 
 export const useRetryApi = (method) => {
     const dispatch = useDispatch();

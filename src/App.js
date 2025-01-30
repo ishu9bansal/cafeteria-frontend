@@ -1,18 +1,18 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import './App.css';
 import Navbar from './components/Navbar';
-import { useDispatch, useSelector } from 'react-redux';
+import { useRetryApi } from './hooks';
+import { Auth, Login, Register } from './pages/AuthPages';
+import { CartPage } from './pages/CartPage';
+import { CounterPage } from './pages/CounterPage';
+import { HomePage } from './pages/HomePage';
+import { ManageCounters } from './pages/ManageCounters';
+import { ProfilePage } from './pages/ProfilePage';
+import { UsersPage } from './pages/UsersPage';
 import { setLoading, setUser } from './slices/authSlice';
 import { setCart } from './slices/cartSlice';
-import { HomePage } from './pages/HomePage';
-import { CounterPage } from './pages/CounterPage';
-import { ProfilePage } from './pages/ProfilePage';
-import { Auth, Login, Register } from './pages/AuthPages';
-import { useRetryApi } from './hooks';
-import { CartPage } from './pages/CartPage';
-import { UsersPage } from './pages/UsersPage';
-import { ManageCounters } from './pages/ManageCounters';
 
 const App = () => {
   const user = useSelector(state => state.auth.user);

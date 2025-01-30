@@ -1,8 +1,8 @@
+import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link, Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { authCall } from '../utils';
 import { useAuthLogin } from '../hooks';
+import { authCall } from '../utils';
 
 // Auth Layout
 export function Auth() {

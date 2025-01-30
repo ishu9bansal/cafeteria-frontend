@@ -1,10 +1,11 @@
-import { setCart, setLoading } from "../slices/cartSlice";
-import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useRetryApi } from "../hooks";
+import { setCart, setLoading } from "../slices/cartSlice";
 
 export const DishCard = ({ dish, isEditable = false, onUpdateDish, onDeleteDish }) => {
+    // TODO: split this into two components
     const cartDishes = useSelector(state => state.cart.items.map(item => item.dish._id));
     const cartLoading = useSelector(state => state.cart.loading);
     const [cardLoading, setCardLoading] = useState(false);

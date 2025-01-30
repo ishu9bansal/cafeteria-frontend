@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { useRetryApi } from "../hooks";
 import { useNavigate } from "react-router-dom";
+import { useRetryApi } from "../hooks";
+
+// TODO: move this functionality to admin slice
 
 const StaticCounterCard = ({ counter, setEditing, handleDelete, loading }) => {
     const className = "admin-counter-card" + (loading ? " disabled" : "");

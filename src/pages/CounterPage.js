@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { DishCard, DishForm } from "../components/Dish";
-import { useDispatch, useSelector } from "react-redux";
-import { selectCanUserEditCounter, setCounter, setDishes } from "../slices/counterSlice";
 import { useRetryApi } from "../hooks";
+import { selectCanUserEditCounter, setCounter, setDishes } from "../slices/counterSlice";
 
 export const CounterPage = () => {
     const { counterId } = useParams();

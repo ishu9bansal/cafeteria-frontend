@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { AdminCounterCard, CounterCard } from "../components/Counter";
 import { ROLE } from "../constants";
-import { AdminCounterCard } from "../components/Counter";
 import { useRetryApi } from "../hooks";
-import { CounterCard } from "../components/Counter";
 
 export const ManageCounters = () => {
     const [counters, setCounters] = useState([]);

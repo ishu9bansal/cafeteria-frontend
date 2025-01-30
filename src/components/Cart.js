@@ -1,7 +1,6 @@
 import { useDispatch } from "react-redux";
-import { setCart } from "../slices/cartSlice";
 import { useRetryApi } from "../hooks";
-import { setLoading } from "../slices/cartSlice";
+import { setCart, setLoading } from "../slices/cartSlice";
 
 export const CartItem = ({ item, showError, loading }) => {
     const dispatch = useDispatch();
