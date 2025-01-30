@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { authCall } from '../utils';
 import { useAuthLogin } from '../hooks';
 
+// Auth Layout
 export function Auth() {
     const user = useSelector(state => state.auth.user);
     const location = useLocation();
@@ -56,11 +57,7 @@ export function Login() {
                 <input disabled={loading} type="submit" value={loginButtonText} className="submit-button" />
             </form>
 
-            {
-                error && <div className='auth-error'>
-                    {error}
-                </div>
-            }
+            {error && <div className='auth-error'>{error}</div>}
 
             <div className="auth-footer">
                 Don't have an account? <Link to="/register">Register</Link>
@@ -119,16 +116,8 @@ export function Register() {
                 </div>
                 <input type="submit" value="Register" className="submit-button" />
             </form>
-            {
-                error && <div className='auth-error'>
-                    {error}
-                </div>
-            }
-            {
-                success && <div className='auth-success'>
-                    {success}
-                </div>
-            }
+            {error && <div className='auth-error'>{error}</div>}
+            {success && <div className='auth-success'>{success}</div>}
             <div className="auth-footer">
                 Already have an account? <Link to="/login">Login</Link>
             </div>

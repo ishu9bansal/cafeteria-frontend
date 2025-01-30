@@ -8,7 +8,7 @@ import { setCart } from './slices/cartSlice';
 import { HomePage } from './pages/HomePage';
 import { CounterPage, ManageCounters } from './components/Counter';
 import { ProfilePage } from './pages/ProfilePage';
-import { Auth, Login, Register } from './components/Auth';
+import { Auth, Login, Register } from './pages/AuthPages';
 import { useRetryApi } from './hooks';
 import { CartPage } from './pages/CartPage';
 import { UsersPage } from './pages/UsersPage';
