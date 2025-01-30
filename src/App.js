@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setLoading, setUser } from './slices/authSlice';
 import { setCart } from './slices/cartSlice';
 import { HomePage } from './pages/HomePage';
-import { CounterPage } from './pages/Counter';
+import { CounterPage } from './pages/CounterPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { Auth, Login, Register } from './pages/AuthPages';
 import { useRetryApi } from './hooks';
