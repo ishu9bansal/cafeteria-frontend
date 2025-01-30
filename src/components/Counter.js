@@ -1,11 +1,110 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { DishCard, DishForm } from "./Dish";
-import { useDispatch, useSelector } from "react-redux";
-import { setCounter, setDishes } from "../slices/counterSlice";
-import { ROLE } from "../constants";
-import { CountersAdminView } from "./Admin";
 import { useRetryApi } from "../hooks";
+import { useNavigate } from "react-router-dom";
+
+const StaticCounterCard = ({ counter, setEditing, handleDelete, loading }) => {
+    const className = "admin-counter-card" + (loading ? " disabled" : "");
+    return (<div className={className}>
+        <h3>{counter.name}</h3>
+        <p><strong>Merchants:</strong></p>
+        <ul>
+            {counter.merchants.map(merchant => (<li key={merchant._id}>
+                {merchant.name} - {merchant.email}
+            </li>))}
+        </ul>
+        <div className="button-group">
+            <button disabled={loading} onClick={() => setEditing(true)}>Edit</button>
+            <button disabled={loading} onClick={handleDelete}>Delete</button>
+        </div>
+
+    </div>);
+};
+
+const EditingCounterCard = ({ counter, handleSave, onCancel }) => {
+    const [name, setName] = useState(counter.name);
+    const [merchants, setMerchants] = useState(counter.merchants);
+    const [query, setQuery] = useState("");
+    const [results, setResults] = useState([]);
+    const retryGetApi = useRetryApi('get');
+    const filteredUsers = results.filter(u => !merchants.map(m => m._id).includes(u._id));
+    const handleDeleteUser = (merchantId) => {
+        const updatedMerchants = merchants.filter(m => m._id !== merchantId);
+        setMerchants(updatedMerchants);
+    }
+    const handleAddUser = (user) => {
+        const updatedMerchants = [...merchants, user]
+        setMerchants(updatedMerchants);
+    }
+
+    const fetchUsers = async (search) => {
+        try {
+            const searchResults = await retryGetApi(`/users?search=${search}`);
+            setResults(searchResults);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    useEffect(() => {
+        if (query.trim()) {
+            fetchUsers(query.trim().toLowerCase());
+        }
+        return () => setResults([]);
+    }, [query]);
+
+    return (<div className="admin-counter-card">
+        <h3><input type="text" value={name} onChange={(e) => setName(e.target.value)} /></h3>
+        <p><strong>Merchants:</strong></p>
+        <ul>
+            {merchants.map(merchant => (<li key={merchant._id}>
+                <span>{merchant.name} - {merchant.email}</span><span className="remove-user" onClick={() => handleDeleteUser(merchant._id)}>X</span>
+            </li>))}
+        </ul>
+        <input placeholder="Start typing to search for merchants" type="text" value={query} onChange={(e) => setQuery(e.target.value)} />
+        {filteredUsers.length > 0 && <div className="dropdown">
+            {filteredUsers.map(user => (
+                <div key={user._id} onClick={() => handleAddUser(user)}>
+                    {user.name} - {user.email}
+                </div>
+            ))}
+        </div>}
+        <div className="button-group">
+            <button onClick={() => handleSave({ name, merchants })}>Save</button>
+            <button onClick={onCancel}>Cancel</button>
+        </div>
+    </div>);
+};
+
+export const AdminCounterCard = ({ counter, handleDelete, handleSave }) => {
+    const [loading, setLoading] = useState(false);
+    const [editing, setEditing] = useState(false);
+
+    const onHandleSave = async ({ name, merchants }) => {
+        setEditing(false);
+        setLoading(true);
+        try {
+            await handleSave({ _id: counter._id, name, merchants: merchants.map(m => m._id) });
+        } catch (err) {
+            console.error(err);
+        }
+        setLoading(false);
+    }
+
+    const onHandleDelete = async () => {
+        setLoading(true);
+        try {
+            await handleDelete(counter._id);
+        } catch (err) {
+            console.error(err);
+        }
+        setLoading(false);
+    };
+
+    return (editing
+        ? <EditingCounterCard counter={counter} handleSave={onHandleSave} onCancel={() => setEditing(false)} />
+        : <StaticCounterCard counter={counter} setEditing={setEditing} handleDelete={onHandleDelete} loading={loading} />
+    );
+};
 
 export const CounterCard = ({ counter }) => {
     const navigate = useNavigate();
@@ -18,114 +117,4 @@ export const CounterCard = ({ counter }) => {
             <p>{counter.name}</p>
         </div>
     );
-};
-
-export const CounterPage = () => {
-    const { counterId } = useParams();
-    const canEdit = useSelector(selectCanUserEditCounter);
-    const fetchDishesApi = canEdit ? `/counter/${counterId}` : `/dishes?counter=${counterId}`;
-    const dishes = useSelector(state => state.counter.dishes);
-    const counter = useSelector(state => state.counter.details);
-    const [showForm, setShowForm] = useState(false);
-    const retryGetApi = useRetryApi('get');
-    const dispatch = useDispatch();
-
-    const fetchDishes = async () => {
-        try {
-            const { dishes, counter } = await retryGetApi(fetchDishesApi);
-            dispatch(setDishes(dishes));
-            dispatch(setCounter(counter));
-        } catch (err) {
-            console.error('Error fetching dishes:', err)
-        }
-    }
-
-    useEffect(() => {
-        fetchDishes()
-        return () => {
-            dispatch(setDishes([]));
-            dispatch(setCounter(null));
-        };
-    }, []);
-
-    const handleDishCreated = (newDish) => {
-        dispatch(setDishes([...dishes, newDish])); // Add the new dish to the existing list
-    };
-
-    const onUpdateDish = (dish) => {
-        const updatedDishes = dishes.map(d => d._id === dish._id ? dish : d);
-        dispatch(setDishes(updatedDishes));
-    };
-
-    const onDeleteDish = (dishId) => {
-        const updatedDishes = dishes.filter(d => d._id !== dishId);
-        dispatch(setDishes(updatedDishes));
-    };
-
-    return (
-        <div>
-            <h1>{counter?.name || "Loading..."}</h1>
-            {canEdit &&
-                <button className="new-dish" onClick={() => setShowForm(true)}>Add New Dish</button>}
-
-            {showForm && (
-                <DishForm
-                    counterId={counterId}
-                    onClose={() => setShowForm(false)}
-                    onDishCreated={handleDishCreated}
-                />
-            )}
-            <div>
-                {dishes.map(dish => <DishCard key={dish._id} dish={dish} isEditable={canEdit} onUpdateDish={onUpdateDish} onDeleteDish={onDeleteDish} />)}
-            </div>
-        </div>
-    );
-};
-
-export const ManageCounters = () => {
-    const [counters, setCounters] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const user = useSelector(state => state.auth.user);
-    const isMerchantView = user?.role === ROLE.Merchant;
-    const query = isMerchantView ? `?merchants=${user._id}` : '';
-    const retryGetApi = useRetryApi('get');
-
-    const fetchCounters = async (filters = '') => {
-        setLoading(true);
-        try {
-            const counters = await retryGetApi('/counters' + filters);
-            setCounters(counters);
-        } catch (err) {
-            console.error('Error fetching counters:', err);
-        }
-        setLoading(false);
-    }
-
-    useEffect(() => {
-        fetchCounters(query);
-    }, [query]);
-
-    return (
-        <div>
-            <h1>Manage Counters</h1>
-            {loading && <h1>Loading...</h1>}
-            {isMerchantView
-                ? (
-                    <div>
-                        {counters.map(counter => <CounterCard key={counter._id} counter={counter} />)}
-                    </div>
-                )
-                : (<CountersAdminView counters={counters} fetchCounters={fetchCounters} />)
-            }
-
-        </div>
-    );
-};
-
-const selectCanUserEditCounter = (state) => {
-    // return false;
-    const { user } = state.auth;
-    const { details: counter } = state.counter;
-
-    return user && counter && counter.merchants?.includes(user._id);
 };

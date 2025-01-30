@@ -19,3 +19,11 @@ const counterSlice = createSlice({
 export const { setDishes, setCounter } = counterSlice.actions;
 
 export default counterSlice.reducer;
+
+export const selectCanUserEditCounter = (state) => {
+    // return false;
+    const { user } = state.auth;
+    const { details: counter } = state.counter;
+
+    return user && counter && counter.merchants?.includes(user._id);
+};

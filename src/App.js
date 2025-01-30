@@ -6,12 +6,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setLoading, setUser } from './slices/authSlice';
 import { setCart } from './slices/cartSlice';
 import { HomePage } from './pages/HomePage';
-import { CounterPage, ManageCounters } from './components/Counter';
+import { CounterPage } from './pages/Counter';
 import { ProfilePage } from './pages/ProfilePage';
 import { Auth, Login, Register } from './pages/AuthPages';
 import { useRetryApi } from './hooks';
 import { CartPage } from './pages/CartPage';
 import { UsersPage } from './pages/UsersPage';
+import { ManageCounters } from './pages/ManageCounters';
 
 const App = () => {
   const user = useSelector(state => state.auth.user);
