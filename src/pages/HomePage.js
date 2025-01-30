@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CounterCard } from "./Counter";
+import { CounterCard } from "../components/Counter";
 import { useRetryApi } from "../hooks";
 
 export const HomePage = () => {

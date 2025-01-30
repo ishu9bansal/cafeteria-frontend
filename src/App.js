@@ -5,7 +5,7 @@ import Navbar from './components/Navbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLoading, setUser } from './slices/authSlice';
 import { setCart } from './slices/cartSlice';
-import { HomePage } from './components/Home';
+import { HomePage } from './pages/HomePage';
 import { CounterPage, ManageCounters } from './components/Counter';
 import { ProfilePage } from './components/Profile';
 import { UsersPage } from './components/User';
