@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const BASE_URL = 'http://localhost:5050';
-const AUTH_BASE_URL = 'http://localhost:5050/auth';
+const BASE_URL = process.env.REACT_APP_BASE_URL;
+const AUTH_BASE_URL = process.env.REACT_APP_AUTH_URL;
 
 export const REFRESH_TOKEN_ERROR = 'refresh token failed';
 
